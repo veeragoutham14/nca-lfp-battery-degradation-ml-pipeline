@@ -105,7 +105,13 @@ def _iter_files(root: Path):
             continue
         if path.resolve() == SCANNER or path.resolve() == NEEDLE_FILE.resolve():
             continue
-        if any(part in SKIP_DIRS or part.endswith(".egg-info") for part in path.parts):
+        relative = path.relative_to(root)
+        if any(part in SKIP_DIRS or part.endswith(".egg-info") for part in relative.parts):
+            continue
+        # Multi-segment entries such as "brain/data" never equal a single path
+        # part, so compare them as prefixes of the repo-relative path.
+        prefixes = ("/".join(relative.parts[:depth]) for depth in range(1, len(relative.parts)))
+        if any(prefix in SKIP_DIRS for prefix in prefixes):
             continue
         if "node_modules" in path.parts or "generated" in path.parts:
             continue
