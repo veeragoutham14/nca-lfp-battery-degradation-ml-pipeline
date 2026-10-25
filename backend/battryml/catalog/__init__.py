@@ -1,0 +1,1 @@
+"""DuckDB-backed metadata catalog."""

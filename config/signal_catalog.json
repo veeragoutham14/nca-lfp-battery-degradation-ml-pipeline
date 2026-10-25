@@ -1,0 +1,2307 @@
+{
+  "catalog_version": "1.1.0",
+  "source_table": "public.battery_telemetry",
+  "schema_sha256": "synthetic-placeholder",
+  "column_count": 246,
+  "columns": [
+    {
+      "name": "time",
+      "sql_type": "TIMESTAMPTZ",
+      "nullable": false,
+      "original_name": "",
+      "group": "identity"
+    },
+    {
+      "name": "serial",
+      "sql_type": "BIGINT",
+      "nullable": false,
+      "original_name": "",
+      "group": "identity"
+    },
+    {
+      "name": "batt_availablechargecurrent_a",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_limit"
+    },
+    {
+      "name": "batt_availabledischargecurrent_a",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_limit"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_0",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_1",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_10",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_11",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_12",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_13",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_2",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_3",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_4",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_5",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_6",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_7",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_8",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_cellvoltage_mv_9",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_moduleid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_nodeid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_packid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_temperature0_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_temperature1_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_temperature2_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack1_temperature3_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_0",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_1",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_10",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_11",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_12",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_13",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_2",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_3",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_4",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_5",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_6",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_7",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_8",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_cellvoltage_mv_9",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_moduleid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_nodeid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_packid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_temperature0_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_temperature1_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_temperature2_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod1_pack2_temperature3_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_0",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_1",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_10",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_11",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_12",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_13",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_2",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_3",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_4",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_5",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_6",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_7",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_8",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_cellvoltage_mv_9",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_moduleid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_nodeid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_packid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_temperature0_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_temperature1_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_temperature2_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack1_temperature3_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_0",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_1",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_10",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_11",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_12",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_13",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_2",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_3",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_4",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_5",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_6",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_7",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_8",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_cellvoltage_mv_9",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_moduleid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_nodeid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_packid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_temperature0_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_temperature1_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_temperature2_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod2_pack2_temperature3_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_0",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_1",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_10",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_11",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_12",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_13",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_2",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_3",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_4",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_5",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_6",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_7",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_8",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_cellvoltage_mv_9",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_moduleid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_nodeid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_packid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_temperature0_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_temperature1_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_temperature2_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack1_temperature3_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_0",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_1",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_10",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_11",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_12",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_13",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_2",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_3",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_4",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_5",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_6",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_7",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_8",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_cellvoltage_mv_9",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_moduleid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_nodeid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_packid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_temperature0_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_temperature1_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_temperature2_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod3_pack2_temperature3_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_0",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_1",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_10",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_11",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_12",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_13",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_2",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_3",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_4",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_5",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_6",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_7",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_8",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_cellvoltage_mv_9",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_moduleid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_nodeid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_packid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_temperature0_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_temperature1_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_temperature2_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack1_temperature3_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_0",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_1",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_10",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_11",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_12",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_13",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_2",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_3",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_4",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_5",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_6",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_7",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_8",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_cellvoltage_mv_9",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_moduleid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_nodeid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_packid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_temperature0_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_temperature1_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_temperature2_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterymodules_mod4_pack2_temperature3_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_batterystate",
+      "sql_type": "INTEGER",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "batt_bmstemperaturemax_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_canopenstate",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "batt_celltemperaturemax_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_celltemperaturemin_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "batt_cellvoltagemax_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_cellvoltagemin_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_compensatedcellvoltagemax_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_compensatedcellvoltagemin_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "batt_current_a",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "electrical"
+    },
+    {
+      "name": "batt_dcswitchclosed",
+      "sql_type": "BOOLEAN",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "batt_endofchargevoltage_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_limit"
+    },
+    {
+      "name": "batt_endofdischargevoltage_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_limit"
+    },
+    {
+      "name": "batt_intermediatevoltage_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "electrical"
+    },
+    {
+      "name": "batt_modulecount",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_nodeid",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "module_metadata"
+    },
+    {
+      "name": "batt_power_w",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "electrical"
+    },
+    {
+      "name": "batt_soc_pct",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "electrical"
+    },
+    {
+      "name": "batt_soh_pct",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "electrical"
+    },
+    {
+      "name": "batt_stackstatus",
+      "sql_type": "TEXT",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "batt_voltage_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "electrical"
+    },
+    {
+      "name": "stack_availablechargecurrent_a",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_limit"
+    },
+    {
+      "name": "stack_availabledischargecurrent_a",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_limit"
+    },
+    {
+      "name": "stack_batterystate",
+      "sql_type": "INTEGER",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "stack_bmstemperaturemax_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "stack_canopenstate",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "stack_celltemperaturemax_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "stack_celltemperaturemin_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "stack_cellvoltagemax_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "stack_cellvoltagemin_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "stack_compensatedcellvoltagemax_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "stack_compensatedcellvoltagemin_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "cell_voltage"
+    },
+    {
+      "name": "stack_dcswitchclosed",
+      "sql_type": "BOOLEAN",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "stack_endofchargevoltage_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_limit"
+    },
+    {
+      "name": "stack_endofdischargevoltage_v",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_limit"
+    },
+    {
+      "name": "stack_stackstatus",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "inverter_activeerror",
+      "sql_type": "TEXT",
+      "nullable": true,
+      "original_name": "",
+      "group": "diagnostic"
+    },
+    {
+      "name": "inverter_batterydcdcstate",
+      "sql_type": "TEXT",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "inverter_communicationestablished",
+      "sql_type": "BOOLEAN",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "inverter_deratingstatus",
+      "sql_type": "TEXT",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "inverter_lastrequestedstate",
+      "sql_type": "INTEGER",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "inverter_measuredbatterytemperature_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "inverter_runtime_s",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "energy_counter"
+    },
+    {
+      "name": "inverter_state",
+      "sql_type": "TEXT",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "inverter_temperature_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "inverter_updatestatus",
+      "sql_type": "TEXT",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "io_analogadctboard_temperature_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "io_indidcswitch_value",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "io_startupdidcswitch",
+      "sql_type": "BOOLEAN",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "sys_counters_energycounterbattin_ws",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "energy_counter"
+    },
+    {
+      "name": "sys_counters_energycounterbattout_ws",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "energy_counter"
+    },
+    {
+      "name": "sys_counters_energycounterhousein_ws",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "energy_counter"
+    },
+    {
+      "name": "sys_counters_energycounterhouseout_ws",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "energy_counter"
+    },
+    {
+      "name": "sys_counters_energycounterpvout_ws",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "energy_counter"
+    },
+    {
+      "name": "sys_cycles",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "energy_counter"
+    },
+    {
+      "name": "sys_energycapacity_wh",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "energy_counter"
+    },
+    {
+      "name": "sys_errorcode",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "diagnostic"
+    },
+    {
+      "name": "sys_isresolvingerror",
+      "sql_type": "BOOLEAN",
+      "nullable": true,
+      "original_name": "",
+      "group": "diagnostic"
+    },
+    {
+      "name": "sys_maxchargepower_w",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_limit"
+    },
+    {
+      "name": "sys_maxdischargepower_w",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_limit"
+    },
+    {
+      "name": "sys_pluginstate",
+      "sql_type": "INTEGER",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "sys_storagestate",
+      "sql_type": "INTEGER",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_state"
+    },
+    {
+      "name": "sys_temperature1_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "sys_temperature2_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "sys_temperature3_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "sys_temperature4_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "sys_temperaturemax_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "sys_temperaturemin_c",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "temperature"
+    },
+    {
+      "name": "sys_extgeneratedenergy_wh",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "energy_counter"
+    },
+    {
+      "name": "pv_faultcurrent_a",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "diagnostic"
+    },
+    {
+      "name": "diagnostics_chargeCurrentLimitSentToInverter_a",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_limit"
+    },
+    {
+      "name": "diagnostics_dischargeCurrentLimitSentToInverter_a",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "operating_limit"
+    },
+    {
+      "name": "activeErrors_names",
+      "sql_type": "TEXT",
+      "nullable": true,
+      "original_name": "",
+      "group": "diagnostic"
+    },
+    {
+      "name": "activeErrors_count",
+      "sql_type": "DOUBLE PRECISION",
+      "nullable": true,
+      "original_name": "",
+      "group": "diagnostic"
+    }
+  ],
+  "profiles": {
+    "soh_core": {
+      "description": "Legacy six-signal SOH and throughput profile.",
+      "columns": [
+        "time",
+        "serial",
+        "batt_current_a",
+        "batt_soc_pct",
+        "batt_soh_pct",
+        "batt_voltage_v"
+      ]
+    },
+    "module_count_v1": {
+      "description": "Minimal module-count inventory profile.",
+      "columns": [
+        "time",
+        "serial",
+        "batt_modulecount"
+      ]
+    },
+    "cell_health_v1": {
+      "description": "Compact SOC, current, pack, global cell-spread, and temperature profile for bounded diagnostics.",
+      "columns": [
+        "time",
+        "serial",
+        "batt_bmstemperaturemax_c",
+        "batt_celltemperaturemax_c",
+        "batt_celltemperaturemin_c",
+        "batt_cellvoltagemax_v",
+        "batt_cellvoltagemin_v",
+        "batt_compensatedcellvoltagemax_v",
+        "batt_compensatedcellvoltagemin_v",
+        "batt_current_a",
+        "batt_modulecount",
+        "batt_power_w",
+        "batt_soc_pct",
+        "batt_soh_pct",
+        "batt_voltage_v"
+      ]
+    },
+    "health_core_v1": {
+      "description": "Core SOH, electrical limits, energy counters, states, and diagnostics.",
+      "columns": [
+        "time",
+        "serial",
+        "batt_availablechargecurrent_a",
+        "batt_availabledischargecurrent_a",
+        "batt_batterystate",
+        "batt_canopenstate",
+        "batt_current_a",
+        "batt_dcswitchclosed",
+        "batt_endofchargevoltage_v",
+        "batt_endofdischargevoltage_v",
+        "batt_intermediatevoltage_v",
+        "batt_modulecount",
+        "batt_power_w",
+        "batt_soc_pct",
+        "batt_soh_pct",
+        "batt_stackstatus",
+        "batt_voltage_v",
+        "stack_availablechargecurrent_a",
+        "stack_availabledischargecurrent_a",
+        "stack_batterystate",
+        "stack_canopenstate",
+        "stack_dcswitchclosed",
+        "stack_endofchargevoltage_v",
+        "stack_endofdischargevoltage_v",
+        "stack_stackstatus",
+        "inverter_activeerror",
+        "inverter_batterydcdcstate",
+        "inverter_communicationestablished",
+        "inverter_deratingstatus",
+        "inverter_lastrequestedstate",
+        "inverter_runtime_s",
+        "inverter_state",
+        "inverter_updatestatus",
+        "io_indidcswitch_value",
+        "io_startupdidcswitch",
+        "sys_counters_energycounterbattin_ws",
+        "sys_counters_energycounterbattout_ws",
+        "sys_counters_energycounterhousein_ws",
+        "sys_counters_energycounterhouseout_ws",
+        "sys_counters_energycounterpvout_ws",
+        "sys_cycles",
+        "sys_energycapacity_wh",
+        "sys_errorcode",
+        "sys_isresolvingerror",
+        "sys_maxchargepower_w",
+        "sys_maxdischargepower_w",
+        "sys_pluginstate",
+        "sys_storagestate",
+        "sys_extgeneratedenergy_wh",
+        "pv_faultcurrent_a",
+        "diagnostics_chargeCurrentLimitSentToInverter_a",
+        "diagnostics_dischargeCurrentLimitSentToInverter_a",
+        "activeErrors_names",
+        "activeErrors_count"
+      ]
+    },
+    "electrothermal_v1": {
+      "description": "Health core plus all per-cell voltage and temperature channels.",
+      "columns": [
+        "time",
+        "serial",
+        "batt_availablechargecurrent_a",
+        "batt_availabledischargecurrent_a",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_0",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_1",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_10",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_11",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_12",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_13",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_2",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_3",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_4",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_5",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_6",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_7",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_8",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_9",
+        "batt_batterymodules_mod1_pack1_temperature0_c",
+        "batt_batterymodules_mod1_pack1_temperature1_c",
+        "batt_batterymodules_mod1_pack1_temperature2_c",
+        "batt_batterymodules_mod1_pack1_temperature3_c",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_0",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_1",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_10",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_11",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_12",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_13",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_2",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_3",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_4",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_5",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_6",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_7",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_8",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_9",
+        "batt_batterymodules_mod1_pack2_temperature0_c",
+        "batt_batterymodules_mod1_pack2_temperature1_c",
+        "batt_batterymodules_mod1_pack2_temperature2_c",
+        "batt_batterymodules_mod1_pack2_temperature3_c",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_0",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_1",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_10",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_11",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_12",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_13",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_2",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_3",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_4",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_5",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_6",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_7",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_8",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_9",
+        "batt_batterymodules_mod2_pack1_temperature0_c",
+        "batt_batterymodules_mod2_pack1_temperature1_c",
+        "batt_batterymodules_mod2_pack1_temperature2_c",
+        "batt_batterymodules_mod2_pack1_temperature3_c",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_0",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_1",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_10",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_11",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_12",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_13",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_2",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_3",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_4",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_5",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_6",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_7",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_8",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_9",
+        "batt_batterymodules_mod2_pack2_temperature0_c",
+        "batt_batterymodules_mod2_pack2_temperature1_c",
+        "batt_batterymodules_mod2_pack2_temperature2_c",
+        "batt_batterymodules_mod2_pack2_temperature3_c",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_0",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_1",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_10",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_11",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_12",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_13",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_2",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_3",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_4",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_5",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_6",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_7",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_8",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_9",
+        "batt_batterymodules_mod3_pack1_temperature0_c",
+        "batt_batterymodules_mod3_pack1_temperature1_c",
+        "batt_batterymodules_mod3_pack1_temperature2_c",
+        "batt_batterymodules_mod3_pack1_temperature3_c",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_0",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_1",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_10",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_11",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_12",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_13",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_2",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_3",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_4",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_5",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_6",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_7",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_8",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_9",
+        "batt_batterymodules_mod3_pack2_temperature0_c",
+        "batt_batterymodules_mod3_pack2_temperature1_c",
+        "batt_batterymodules_mod3_pack2_temperature2_c",
+        "batt_batterymodules_mod3_pack2_temperature3_c",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_0",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_1",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_10",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_11",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_12",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_13",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_2",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_3",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_4",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_5",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_6",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_7",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_8",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_9",
+        "batt_batterymodules_mod4_pack1_temperature0_c",
+        "batt_batterymodules_mod4_pack1_temperature1_c",
+        "batt_batterymodules_mod4_pack1_temperature2_c",
+        "batt_batterymodules_mod4_pack1_temperature3_c",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_0",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_1",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_10",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_11",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_12",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_13",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_2",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_3",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_4",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_5",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_6",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_7",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_8",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_9",
+        "batt_batterymodules_mod4_pack2_temperature0_c",
+        "batt_batterymodules_mod4_pack2_temperature1_c",
+        "batt_batterymodules_mod4_pack2_temperature2_c",
+        "batt_batterymodules_mod4_pack2_temperature3_c",
+        "batt_batterystate",
+        "batt_bmstemperaturemax_c",
+        "batt_canopenstate",
+        "batt_celltemperaturemax_c",
+        "batt_celltemperaturemin_c",
+        "batt_cellvoltagemax_v",
+        "batt_cellvoltagemin_v",
+        "batt_compensatedcellvoltagemax_v",
+        "batt_compensatedcellvoltagemin_v",
+        "batt_current_a",
+        "batt_dcswitchclosed",
+        "batt_endofchargevoltage_v",
+        "batt_endofdischargevoltage_v",
+        "batt_intermediatevoltage_v",
+        "batt_modulecount",
+        "batt_power_w",
+        "batt_soc_pct",
+        "batt_soh_pct",
+        "batt_stackstatus",
+        "batt_voltage_v",
+        "stack_availablechargecurrent_a",
+        "stack_availabledischargecurrent_a",
+        "stack_batterystate",
+        "stack_bmstemperaturemax_c",
+        "stack_canopenstate",
+        "stack_celltemperaturemax_c",
+        "stack_celltemperaturemin_c",
+        "stack_cellvoltagemax_v",
+        "stack_cellvoltagemin_v",
+        "stack_compensatedcellvoltagemax_v",
+        "stack_compensatedcellvoltagemin_v",
+        "stack_dcswitchclosed",
+        "stack_endofchargevoltage_v",
+        "stack_endofdischargevoltage_v",
+        "stack_stackstatus",
+        "inverter_activeerror",
+        "inverter_batterydcdcstate",
+        "inverter_communicationestablished",
+        "inverter_deratingstatus",
+        "inverter_lastrequestedstate",
+        "inverter_measuredbatterytemperature_c",
+        "inverter_runtime_s",
+        "inverter_state",
+        "inverter_temperature_c",
+        "inverter_updatestatus",
+        "io_analogadctboard_temperature_c",
+        "io_indidcswitch_value",
+        "io_startupdidcswitch",
+        "sys_counters_energycounterbattin_ws",
+        "sys_counters_energycounterbattout_ws",
+        "sys_counters_energycounterhousein_ws",
+        "sys_counters_energycounterhouseout_ws",
+        "sys_counters_energycounterpvout_ws",
+        "sys_cycles",
+        "sys_energycapacity_wh",
+        "sys_errorcode",
+        "sys_isresolvingerror",
+        "sys_maxchargepower_w",
+        "sys_maxdischargepower_w",
+        "sys_pluginstate",
+        "sys_storagestate",
+        "sys_temperature1_c",
+        "sys_temperature2_c",
+        "sys_temperature3_c",
+        "sys_temperature4_c",
+        "sys_temperaturemax_c",
+        "sys_temperaturemin_c",
+        "sys_extgeneratedenergy_wh",
+        "pv_faultcurrent_a",
+        "diagnostics_chargeCurrentLimitSentToInverter_a",
+        "diagnostics_dischargeCurrentLimitSentToInverter_a",
+        "activeErrors_names",
+        "activeErrors_count"
+      ]
+    },
+    "full_research_v1": {
+      "description": "Every column in the database table for research snapshots.",
+      "columns": [
+        "time",
+        "serial",
+        "batt_availablechargecurrent_a",
+        "batt_availabledischargecurrent_a",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_0",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_1",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_10",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_11",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_12",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_13",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_2",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_3",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_4",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_5",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_6",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_7",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_8",
+        "batt_batterymodules_mod1_pack1_cellvoltage_mv_9",
+        "batt_batterymodules_mod1_pack1_moduleid",
+        "batt_batterymodules_mod1_pack1_nodeid",
+        "batt_batterymodules_mod1_pack1_packid",
+        "batt_batterymodules_mod1_pack1_temperature0_c",
+        "batt_batterymodules_mod1_pack1_temperature1_c",
+        "batt_batterymodules_mod1_pack1_temperature2_c",
+        "batt_batterymodules_mod1_pack1_temperature3_c",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_0",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_1",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_10",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_11",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_12",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_13",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_2",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_3",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_4",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_5",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_6",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_7",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_8",
+        "batt_batterymodules_mod1_pack2_cellvoltage_mv_9",
+        "batt_batterymodules_mod1_pack2_moduleid",
+        "batt_batterymodules_mod1_pack2_nodeid",
+        "batt_batterymodules_mod1_pack2_packid",
+        "batt_batterymodules_mod1_pack2_temperature0_c",
+        "batt_batterymodules_mod1_pack2_temperature1_c",
+        "batt_batterymodules_mod1_pack2_temperature2_c",
+        "batt_batterymodules_mod1_pack2_temperature3_c",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_0",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_1",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_10",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_11",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_12",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_13",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_2",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_3",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_4",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_5",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_6",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_7",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_8",
+        "batt_batterymodules_mod2_pack1_cellvoltage_mv_9",
+        "batt_batterymodules_mod2_pack1_moduleid",
+        "batt_batterymodules_mod2_pack1_nodeid",
+        "batt_batterymodules_mod2_pack1_packid",
+        "batt_batterymodules_mod2_pack1_temperature0_c",
+        "batt_batterymodules_mod2_pack1_temperature1_c",
+        "batt_batterymodules_mod2_pack1_temperature2_c",
+        "batt_batterymodules_mod2_pack1_temperature3_c",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_0",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_1",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_10",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_11",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_12",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_13",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_2",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_3",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_4",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_5",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_6",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_7",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_8",
+        "batt_batterymodules_mod2_pack2_cellvoltage_mv_9",
+        "batt_batterymodules_mod2_pack2_moduleid",
+        "batt_batterymodules_mod2_pack2_nodeid",
+        "batt_batterymodules_mod2_pack2_packid",
+        "batt_batterymodules_mod2_pack2_temperature0_c",
+        "batt_batterymodules_mod2_pack2_temperature1_c",
+        "batt_batterymodules_mod2_pack2_temperature2_c",
+        "batt_batterymodules_mod2_pack2_temperature3_c",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_0",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_1",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_10",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_11",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_12",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_13",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_2",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_3",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_4",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_5",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_6",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_7",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_8",
+        "batt_batterymodules_mod3_pack1_cellvoltage_mv_9",
+        "batt_batterymodules_mod3_pack1_moduleid",
+        "batt_batterymodules_mod3_pack1_nodeid",
+        "batt_batterymodules_mod3_pack1_packid",
+        "batt_batterymodules_mod3_pack1_temperature0_c",
+        "batt_batterymodules_mod3_pack1_temperature1_c",
+        "batt_batterymodules_mod3_pack1_temperature2_c",
+        "batt_batterymodules_mod3_pack1_temperature3_c",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_0",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_1",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_10",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_11",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_12",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_13",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_2",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_3",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_4",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_5",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_6",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_7",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_8",
+        "batt_batterymodules_mod3_pack2_cellvoltage_mv_9",
+        "batt_batterymodules_mod3_pack2_moduleid",
+        "batt_batterymodules_mod3_pack2_nodeid",
+        "batt_batterymodules_mod3_pack2_packid",
+        "batt_batterymodules_mod3_pack2_temperature0_c",
+        "batt_batterymodules_mod3_pack2_temperature1_c",
+        "batt_batterymodules_mod3_pack2_temperature2_c",
+        "batt_batterymodules_mod3_pack2_temperature3_c",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_0",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_1",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_10",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_11",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_12",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_13",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_2",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_3",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_4",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_5",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_6",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_7",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_8",
+        "batt_batterymodules_mod4_pack1_cellvoltage_mv_9",
+        "batt_batterymodules_mod4_pack1_moduleid",
+        "batt_batterymodules_mod4_pack1_nodeid",
+        "batt_batterymodules_mod4_pack1_packid",
+        "batt_batterymodules_mod4_pack1_temperature0_c",
+        "batt_batterymodules_mod4_pack1_temperature1_c",
+        "batt_batterymodules_mod4_pack1_temperature2_c",
+        "batt_batterymodules_mod4_pack1_temperature3_c",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_0",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_1",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_10",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_11",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_12",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_13",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_2",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_3",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_4",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_5",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_6",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_7",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_8",
+        "batt_batterymodules_mod4_pack2_cellvoltage_mv_9",
+        "batt_batterymodules_mod4_pack2_moduleid",
+        "batt_batterymodules_mod4_pack2_nodeid",
+        "batt_batterymodules_mod4_pack2_packid",
+        "batt_batterymodules_mod4_pack2_temperature0_c",
+        "batt_batterymodules_mod4_pack2_temperature1_c",
+        "batt_batterymodules_mod4_pack2_temperature2_c",
+        "batt_batterymodules_mod4_pack2_temperature3_c",
+        "batt_batterystate",
+        "batt_bmstemperaturemax_c",
+        "batt_canopenstate",
+        "batt_celltemperaturemax_c",
+        "batt_celltemperaturemin_c",
+        "batt_cellvoltagemax_v",
+        "batt_cellvoltagemin_v",
+        "batt_compensatedcellvoltagemax_v",
+        "batt_compensatedcellvoltagemin_v",
+        "batt_current_a",
+        "batt_dcswitchclosed",
+        "batt_endofchargevoltage_v",
+        "batt_endofdischargevoltage_v",
+        "batt_intermediatevoltage_v",
+        "batt_modulecount",
+        "batt_nodeid",
+        "batt_power_w",
+        "batt_soc_pct",
+        "batt_soh_pct",
+        "batt_stackstatus",
+        "batt_voltage_v",
+        "stack_availablechargecurrent_a",
+        "stack_availabledischargecurrent_a",
+        "stack_batterystate",
+        "stack_bmstemperaturemax_c",
+        "stack_canopenstate",
+        "stack_celltemperaturemax_c",
+        "stack_celltemperaturemin_c",
+        "stack_cellvoltagemax_v",
+        "stack_cellvoltagemin_v",
+        "stack_compensatedcellvoltagemax_v",
+        "stack_compensatedcellvoltagemin_v",
+        "stack_dcswitchclosed",
+        "stack_endofchargevoltage_v",
+        "stack_endofdischargevoltage_v",
+        "stack_stackstatus",
+        "inverter_activeerror",
+        "inverter_batterydcdcstate",
+        "inverter_communicationestablished",
+        "inverter_deratingstatus",
+        "inverter_lastrequestedstate",
+        "inverter_measuredbatterytemperature_c",
+        "inverter_runtime_s",
+        "inverter_state",
+        "inverter_temperature_c",
+        "inverter_updatestatus",
+        "io_analogadctboard_temperature_c",
+        "io_indidcswitch_value",
+        "io_startupdidcswitch",
+        "sys_counters_energycounterbattin_ws",
+        "sys_counters_energycounterbattout_ws",
+        "sys_counters_energycounterhousein_ws",
+        "sys_counters_energycounterhouseout_ws",
+        "sys_counters_energycounterpvout_ws",
+        "sys_cycles",
+        "sys_energycapacity_wh",
+        "sys_errorcode",
+        "sys_isresolvingerror",
+        "sys_maxchargepower_w",
+        "sys_maxdischargepower_w",
+        "sys_pluginstate",
+        "sys_storagestate",
+        "sys_temperature1_c",
+        "sys_temperature2_c",
+        "sys_temperature3_c",
+        "sys_temperature4_c",
+        "sys_temperaturemax_c",
+        "sys_temperaturemin_c",
+        "sys_extgeneratedenergy_wh",
+        "pv_faultcurrent_a",
+        "diagnostics_chargeCurrentLimitSentToInverter_a",
+        "diagnostics_dischargeCurrentLimitSentToInverter_a",
+        "activeErrors_names",
+        "activeErrors_count"
+      ]
+    }
+  }
+}

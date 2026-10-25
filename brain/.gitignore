@@ -1,0 +1,72 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+/=
+
+# Raw extracts are large and can be regenerated from the database.
+data/raw_parquet/**
+!data/raw_parquet/.gitkeep
+
+# Generated pipeline artifacts. Recreate these by rerunning the pipeline instead
+# of storing every device/run output in Git.
+data/processed/classified_rows/**
+!data/processed/classified_rows/.gitkeep
+data/processed/events/**
+!data/processed/events/.gitkeep
+data/processed/capacity_trend/**
+!data/processed/capacity_trend/.gitkeep
+data/processed/capacity_ml/**
+!data/processed/capacity_ml/.gitkeep
+data/processed/partial_capacity_ml/**
+!data/processed/partial_capacity_ml/.gitkeep
+data/processed/device_metadata/**
+!data/processed/device_metadata/.gitkeep
+data/processed/fixed_slope_verification/**
+!data/processed/fixed_slope_verification/.gitkeep
+data/processed/bms_electrothermal_source_quality/**
+!data/processed/bms_electrothermal_source_quality/.gitkeep
+data/processed/bms_hierarchical_features/**
+!data/processed/bms_hierarchical_features/.gitkeep
+data/processed/cell_anomaly/**
+!data/processed/cell_anomaly/.gitkeep
+data/processed/cell_health/**
+!data/processed/cell_health/.gitkeep
+data/processed/cell_signal_audit/**
+!data/processed/cell_signal_audit/.gitkeep
+data/processed/fleet_soh_audit/**
+!data/processed/fleet_soh_audit/.gitkeep
+data/processed/hierarchical_cell_anomaly/**
+!data/processed/hierarchical_cell_anomaly/.gitkeep
+data/processed/bms_soh_recalibration/**
+!data/processed/bms_soh_recalibration/.gitkeep
+data/processed/seasonal_charge_analysis/**
+!data/processed/seasonal_charge_analysis/.gitkeep
+data/processed/discharge_capacity_evidence/**
+!data/processed/discharge_capacity_evidence/.gitkeep
+data/processed/data_validation/**
+!data/processed/data_validation/.gitkeep
+data/validation_plots/**
+!data/validation_plots/.gitkeep
+
+# Configurable import metadata and compact telemetry are generated locally.
+data/import_manifests/**
+!data/import_manifests/.gitkeep
+data/telemetry_5min/**
+!data/telemetry_5min/.gitkeep
+
+# Local platform/catalog artifacts.
+data/catalog/**
+!data/catalog/.gitkeep
+data/runs/**
+!data/runs/.gitkeep
+data/tmp/**
+!data/tmp/.gitkeep
+
+# Telemetry exports are never committed
+*.parquet
+*.duckdb

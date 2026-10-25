@@ -1,0 +1,26 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local config
+.env
+
+# Generated outputs
+data/processed/
+data/models/
+data/Excel_view/
+run_archive/
+
+# Raw datasets / logs
+
+data/raw/
+models/
+
+# Telemetry exports are never committed
+*.parquet
+*.duckdb
+*.xlsx

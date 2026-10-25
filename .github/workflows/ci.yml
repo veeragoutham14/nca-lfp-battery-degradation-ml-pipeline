@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install brain and platform
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r brain/requirements.txt
+          pip install -e ".[dev]"
+      - name: Brain tests
+        working-directory: brain
+        run: python -m pytest
+      - name: Platform tests
+        run: python -m pytest
+      - name: Forbidden-string scan
+        env:
+          FORBIDDEN_NEEDLES: ${{ secrets.FORBIDDEN_NEEDLES }}
+        run: python scripts/scan_forbidden.py
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install and build
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build

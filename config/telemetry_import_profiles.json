@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "resolutions": {
+    "1s": {
+      "label": "One-second source telemetry",
+      "output_family": "raw_parquet"
+    },
+    "5m": {
+      "label": "Five-minute compact telemetry",
+      "output_family": "telemetry_5min"
+    }
+  },
+  "chemistries": {
+    "NCA": {
+      "description": "NCA field and reference systems using battery-stack (batt_*) signals.",
+      "fields": {
+        "soc": {
+          "label": "State of charge",
+          "columns": ["batt_soc_pct"],
+          "aggregation": "mean",
+          "default_resolution": "1s"
+        },
+        "soh": {
+          "label": "BMS state of health",
+          "columns": ["batt_soh_pct"],
+          "aggregation": "last",
+          "default_resolution": "1s"
+        },
+        "voltage": {
+          "label": "BMS stack voltage",
+          "columns": ["batt_voltage_v"],
+          "aggregation": "mean",
+          "default_resolution": "1s"
+        },
+        "temperature": {
+          "label": "BMS temperature summaries",
+          "columns": [
+            "batt_bmstemperaturemax_c",
+            "batt_celltemperaturemin_c",
+            "batt_celltemperaturemax_c"
+          ],
+          "aggregation": "mean",
+          "default_resolution": "5m"
+        },
+        "current": {
+          "label": "BMS stack current",
+          "columns": ["batt_current_a"],
+          "aggregation": "mean",
+          "default_resolution": "1s"
+        },
+        "cycle_count": {
+          "label": "BMS lifecycle cycle counter",
+          "columns": ["sys_cycles"],
+          "aggregation": "last",
+          "default_resolution": "5m"
+        }
+      }
+    },
+    "LFP": {
+      "description": "LFP systems. Mappings are intentionally independent from NCA.",
+      "fields": {
+        "soc": {
+          "label": "State of charge",
+          "columns": ["batt_soc_pct"],
+          "aggregation": "mean",
+          "default_resolution": "1s"
+        },
+        "soh": {
+          "label": "BMS state of health",
+          "columns": ["batt_soh_pct"],
+          "aggregation": "last",
+          "default_resolution": "1s"
+        },
+        "voltage": {
+          "label": "BMS stack voltage",
+          "columns": ["batt_voltage_v"],
+          "aggregation": "mean",
+          "default_resolution": "1s"
+        },
+        "temperature": {
+          "label": "BMS temperature summaries",
+          "columns": [
+            "batt_bmstemperaturemax_c",
+            "batt_celltemperaturemin_c",
+            "batt_celltemperaturemax_c"
+          ],
+          "aggregation": "mean",
+          "default_resolution": "5m"
+        },
+        "current": {
+          "label": "BMS stack current",
+          "columns": ["batt_current_a"],
+          "aggregation": "mean",
+          "default_resolution": "1s"
+        },
+        "cycle_count": {
+          "label": "BMS lifecycle cycle counter",
+          "columns": ["sys_cycles"],
+          "aggregation": "last",
+          "default_resolution": "5m"
+        }
+      }
+    }
+  }
+}

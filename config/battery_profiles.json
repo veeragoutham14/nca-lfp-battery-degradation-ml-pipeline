@@ -1,0 +1,250 @@
+{
+  "schema_version": 3,
+  "variants": {
+    "nca_home_storage": {
+      "chemistry": "NCA",
+      "nominal_capacity_ah": 64.0,
+      "module_capacity_ah": 32.0,
+      "module_energy_kwh": 7.0,
+      "loss_slope_reference_module_count": 2,
+      "device_role": "field_tester",
+      "default_loss_slopes_per_1000ah": [
+        0.12
+      ],
+      "devices": [
+        {
+          "serial": "100000001",
+          "display_name": "NCA Field 01",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000002",
+          "display_name": "NCA Field 02",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000004",
+          "display_name": "NCA Field 03",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000005",
+          "display_name": "NCA Field 04",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000006",
+          "display_name": "NCA Field 05",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000007",
+          "display_name": "NCA Field 06",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000008",
+          "display_name": "NCA Field 07",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000009",
+          "display_name": "NCA Field 08",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000010",
+          "display_name": "NCA Field 09",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000012",
+          "display_name": "NCA Field 10",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000013",
+          "display_name": "NCA Field 11",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000014",
+          "display_name": "NCA Field 12",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000015",
+          "display_name": "NCA Field 13",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000016",
+          "display_name": "NCA Field 14",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000018",
+          "display_name": "NCA Field 15",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000019",
+          "display_name": "NCA Field 16",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000029",
+          "display_name": "NCA Field 17",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000030",
+          "display_name": "NCA Field 18",
+          "data_available_from": "2023-08-01"
+        },
+        {
+          "serial": "100000031",
+          "display_name": "NCA Field 19",
+          "data_available_from": "2023-08-01"
+        }
+      ]
+    },
+    "nca_field_reference": {
+      "chemistry": "NCA",
+      "nominal_capacity_ah": 64.0,
+      "module_capacity_ah": 32.0,
+      "module_energy_kwh": 7.0,
+      "loss_slope_reference_module_count": 2,
+      "device_role": "field_tester",
+      "default_loss_slopes_per_1000ah": [
+        0.12
+      ],
+      "devices": [
+        {
+          "serial": "100000011",
+          "display_name": "NCA Field Reference",
+          "data_available_from": "2023-03-15"
+        }
+      ]
+    },
+    "nca_full_cycle_reference": {
+      "chemistry": "NCA",
+      "nominal_capacity_ah": 56.0,
+      "module_capacity_ah": 28.0,
+      "module_energy_kwh": 6.0,
+      "loss_slope_reference_module_count": 2,
+      "device_role": "full_cycle_test",
+      "default_loss_slopes_per_1000ah": [],
+      "devices": [
+        {
+          "serial": "100000017",
+          "display_name": "NCA Full-Cycle Reference",
+          "data_available_from": "2022-05-01"
+        }
+      ]
+    },
+    "lfp_field_storage": {
+      "chemistry": "LFP",
+      "device_role": "field_tester",
+      "devices": [
+        {
+          "serial": "100000020",
+          "display_name": "LFP Field 01",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000021",
+          "display_name": "LFP Field 02",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000022",
+          "display_name": "LFP Field 03",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000023",
+          "display_name": "LFP Field 04",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000024",
+          "display_name": "LFP Field 05",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000025",
+          "display_name": "LFP Field 06",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000026",
+          "display_name": "LFP Field 07",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000027",
+          "display_name": "LFP Field 08",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000028",
+          "display_name": "LFP Field 09",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000032",
+          "display_name": "LFP Field 10",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000033",
+          "display_name": "LFP Field 11",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000034",
+          "display_name": "LFP Field 12",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000035",
+          "display_name": "LFP Field 13",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000036",
+          "display_name": "LFP Field 14",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000037",
+          "display_name": "LFP Field 15",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000038",
+          "display_name": "LFP Field 16",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000039",
+          "display_name": "LFP Field 17",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000040",
+          "display_name": "LFP Field 18",
+          "data_available_from": "2024-11-01"
+        },
+        {
+          "serial": "100000041",
+          "display_name": "LFP Field 19",
+          "data_available_from": "2024-11-01"
+        }
+      ]
+    }
+  },
+  "synthetic": true,
+  "note": "Synthetic demonstration devices. Capacities, module energy, loss slopes, and start dates are round invented values."
+}

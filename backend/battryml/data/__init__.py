@@ -1,0 +1,1 @@
+"""Normalized analytical data access."""
