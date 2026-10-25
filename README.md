@@ -10,6 +10,38 @@
 
 This repository is Veera Goutham Venkatesh's own pipeline from a working-student R&D project on home battery storage, published with synthetic data. One-second pack telemetry is turned into operating events, full-cycle capacity, a multi-model degradation fit, and a 10-year state-of-health forecast, then shown in a FastAPI and React dashboard. Every number and screenshot below comes from the synthetic generator.
 
+## Why it's useful: one place for the whole fleet
+
+![Synthetic data. NCA fleet capacity page: 19 field devices compared with the full-cycle reference.](docs/images/app-fleet-comparison.png)
+
+- **One page for the NCA fleet.** The *NCA fleet capacity* tab on the Machine learning page sets every NCA field device that has a fixed-slope verification run against the full-cycle reference. It shows how many devices are active, how many sit more than 1 percentage point below the reference, the median BMS-equivalent loss slope, and how many devices lose capacity at more than twice the reference rate.
+- **A bar per device.** The gap chart plots BMS SOH minus the transferred reference SOH for each device, split into within tolerance and below reference.
+- **A sortable comparison table.** Modules, nominal capacity, discharge throughput, equivalent full cycles, BMS SOH, reference SOH, the difference, BMS-equivalent loss slope, and telemetry coverage, sortable by module count, reference difference, BMS SOH, throughput, or serial. Each row opens that device's workflow. Devices without a verification run are listed as pending instead of being dropped.
+- **Adjustable reference.** The reference loss slope can be changed on the page and the comparison is recomputed from the stored runs.
+- **Fleet-wide device library.** Every imported battery is listed per chemistry (NCA and LFP), and the *Cell signals* tab shows which cell-level sources exist per chemistry.
+
+![Synthetic data. The NCA field comparison table, one row per device.](docs/images/app-fleet-table.png)
+
+### Benchmark on synthetic data
+
+`python scripts/benchmark.py --devices 30 --months 6 --workers 2` generated a 30-device fleet (1 full-cycle reference, 19 NCA field devices, 10 LFP devices) with six months of 1-second data: 38.8 million rows × 246 columns, 9.8 GB of raw Parquet. It then ran the brain on every device and timed the API with 30 warm requests per endpoint. Hardware: cloud VM with 8 vCPUs (Intel Xeon), 15.6 GB RAM, Linux, Python 3.13.
+
+| Measure | Result |
+| --- | --- |
+| Brain, whole fleet, one device at a time | 479 s (median 13.4 s per device, slowest 38.7 s) |
+| Brain, whole fleet, two devices in parallel | 219 s |
+| Event building throughput | about 84,000 rows/s |
+| Largest single brain process | 5.3 GB RSS |
+| Processed output | 8.0 GB Parquet |
+| `GET /api/devices` (30 devices) | first request 1.77 s, then median 53 ms, p95 60 ms |
+| `GET /api/devices?refresh=true` | median 1.35 s, p95 1.47 s |
+| NCA fleet comparison (19 devices) | median 81 ms, p95 85 ms (first request 88 ms) |
+| Cell signal overview | median 54 ms, p95 76 ms |
+| Run summary / run series | median 12 ms / 71 ms |
+| Dashboard build | 1.10 MB JS and CSS, 341 kB gzipped |
+
+These are single-host numbers on synthetic data, measured with the client on the same machine. The script deletes and regenerates `brain/data/`, needs about 20 GB of free disk, and writes its full report to `var/benchmark.json`. One brain process can take several GB of RAM on six months of data, so keep `--workers` low on small machines.
+
 ## Architecture
 
 ```mermaid
@@ -91,7 +123,7 @@ backend/battryml/       FastAPI app, job runner, DuckDB catalog
 frontend/               React dashboard
 prototype_anomaly/      Early Isolation Forest prototype
 config/                 Synthetic device profiles and the signal catalog
-scripts/                Synthetic generator, one-command demo, secret scan
+scripts/                Synthetic generator, one-command demo, fleet benchmark, secret scan
 docs/images/            Figures in this README
 ```
 
