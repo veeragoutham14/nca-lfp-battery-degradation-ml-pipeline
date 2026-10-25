@@ -184,7 +184,7 @@ def scan_tree(root: Path, configured: list[str]) -> list[str]:
 def scan_history(root: Path, configured: list[str]) -> list[str]:
     try:
         result = subprocess.run(
-            ["git", "log", "--all", "--format=%H %B"],
+            ["git", "log", "--all", "--format=%B"],
             cwd=root,
             check=False,
             capture_output=True,
