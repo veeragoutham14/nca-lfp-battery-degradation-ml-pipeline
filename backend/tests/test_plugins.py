@@ -417,8 +417,8 @@ def test_nca_home_storage_profiles_cover_the_19_new_devices() -> None:
         f"NCA Field {index:02d}" for index in range(1, 20)
     }
     assert len({profile.display_name for profile in profiles.values()}) == len(profiles)
-    # LFP field devices are configured without a verified nameplate; NCA keeps
-    # its own chemistry-specific assumptions.
+    # LFP field devices carry their own synthetic LFP nameplate; they never
+    # inherit the NCA values.
     assert {profile.chemistry for profile in profiles.values()} == {"NCA", "LFP"}
     nca_serials = {
         serial for serial, profile in profiles.items() if profile.chemistry == "NCA"
@@ -428,14 +428,14 @@ def test_nca_home_storage_profiles_cover_the_19_new_devices() -> None:
     }
     assert new_field_devices <= nca_serials
     assert len(lfp_serials) == 19
-    assert {profiles[serial].nominal_capacity_ah for serial in lfp_serials} == {None}
+    assert {profiles[serial].nominal_capacity_ah for serial in lfp_serials} == {50.0}
     assert {profiles[serial].nominal_capacity_ah for serial in new_field_devices} == {64.0}
     assert {profiles[serial].module_capacity_ah for serial in new_field_devices} == {32.0}
     assert {profiles[serial].module_energy_kwh for serial in new_field_devices} == {7.0}
     assert battery_profile("100000001").data_available_from == "2023-08-01"
     assert battery_profile("100000011").data_available_from == "2023-03-15"
     assert battery_profile("100000017").data_available_from == "2022-05-01"
-    assert battery_profile("100000020").data_available_from == "2024-11-01"
+    assert battery_profile("100000020").data_available_from == "2024-01-01"
     assert {profiles[serial].loss_slope_reference_module_count for serial in new_field_devices} == {
         2
     }
@@ -553,7 +553,7 @@ LFP_SERIALS = (
 )
 
 
-def test_lfp_variants_load_as_field_testers_without_nameplate_defaults() -> None:
+def test_lfp_variants_load_as_field_testers_with_their_own_nameplate() -> None:
     profiles = battery_profiles()
     lfp = {serial: profiles[serial] for serial in LFP_SERIALS}
 
@@ -561,11 +561,11 @@ def test_lfp_variants_load_as_field_testers_without_nameplate_defaults() -> None
     for serial, profile in lfp.items():
         assert profile.chemistry == "LFP", serial
         assert profile.device_role == "field_tester", serial
-        # No verified LFP nameplate exists yet: capacity defaults must stay
-        # unset so operators supply the value per job instead of inheriting
-        # an NCA assumption.
-        assert profile.nominal_capacity_ah is None, serial
-        assert profile.module_capacity_ah is None, serial
+        # LFP uses its own synthetic nameplate and no transferred NCA loss
+        # slope, so no NCA assumption leaks into LFP jobs.
+        assert profile.nominal_capacity_ah == 50.0, serial
+        assert profile.module_capacity_ah == 25.0, serial
+        assert profile.nominal_capacity_ah != battery_profile("100000001").nominal_capacity_ah
         assert profile.default_loss_slopes_per_1000ah == (), serial
 
 
@@ -591,9 +591,9 @@ def test_prepare_analysis_plugin_builds_lfp_command() -> None:
     assert "--update-raw" not in command
 
 
-def test_prepare_analysis_plugin_requires_capacity_for_lfp_serial() -> None:
-    with pytest.raises(ValueError, match="Missing required parameter: nominal_capacity_ah"):
-        PrepareAnalysisDataPlugin().validate({"serial": "100000020", "module_count": 2})
+def test_prepare_analysis_plugin_uses_the_lfp_nameplate_default() -> None:
+    values = PrepareAnalysisDataPlugin().validate({"serial": "100000020", "module_count": 2})
+    assert values["nominal_capacity_ah"] == 50.0
 
 
 def test_raw_import_plugin_builds_lfp_storage_command(

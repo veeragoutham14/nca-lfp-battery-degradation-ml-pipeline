@@ -311,7 +311,7 @@ def test_v2_plugin_core_command_targets_legacy_layout(
         command[i + 1] for i, flag in enumerate(command) if flag == "--field-resolution"
     ]
     assert sorted(field_resolutions) == ["current=1s", "soc=1s", "soh=1s", "voltage=1s"]
-    assert command[command.index("--start") + 1] == "2024-11-01T00:00:00+00:00"
+    assert command[command.index("--start") + 1] == "2024-01-01T00:00:00+00:00"
 
 
 def test_v2_plugin_custom_command_writes_dedicated_group_roots(
@@ -332,7 +332,7 @@ def test_v2_plugin_custom_command_writes_dedicated_group_roots(
     )
     assert command[command.index("--purpose") + 1] == CUSTOM_PURPOSE
     assert command[command.index("--module-count") + 1] == "2"
-    assert command[command.index("--start") + 1] == "2024-11-01T00:00:00+00:00"
+    assert command[command.index("--start") + 1] == "2024-01-01T00:00:00+00:00"
     group_roots = [
         command[i + 1]
         for i, flag in enumerate(command)
