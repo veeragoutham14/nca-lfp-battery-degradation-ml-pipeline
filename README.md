@@ -273,7 +273,7 @@ docs/images/            Figures in this README
 GitHub Actions runs five checks. The ruff lint, the brain tests, the platform suite, and the forbidden-string scan run on Python 3.12 and 3.13. The frontend production build is a separate job.
 
 - `ruff check .` (rules and scoped ignores in `pyproject.toml`)
-- 89 brain tests (`cd brain && python -m pytest`)
+- 98 brain tests (`cd brain && python -m pytest`)
 - the platform suite (`python -m pytest`; the slow end-to-end test is opt-in, see [Full demo fleet](#full-demo-fleet))
 - the frontend production build (`cd frontend && npm ci && npm run build`)
 - `python scripts/scan_forbidden.py`
