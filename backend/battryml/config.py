@@ -103,7 +103,7 @@ class Settings:
                 1,
                 int(os.getenv("BATTRYML_ML_WORKER_THREADS", "1")),
             ),
-            auth_enabled=_env_bool("BATTRYML_AUTH_ENABLED", False),
+            auth_enabled=_env_bool("BATTRYML_AUTH_ENABLED", True),
             auth_username=os.getenv("BATTRYML_AUTH_USERNAME", "admin").strip() or "admin",
             auth_password=os.getenv("BATTRYML_AUTH_PASSWORD", "battryml"),
             auth_secret=os.getenv("BATTRYML_AUTH_SECRET", ""),

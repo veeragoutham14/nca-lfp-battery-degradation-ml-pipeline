@@ -17,3 +17,13 @@ def test_configured_source_python_keeps_venv_symlink(tmp_path: Path) -> None:
 
     assert resolved == venv_python
     assert resolved != base
+
+
+def test_login_is_required_unless_explicitly_disabled(monkeypatch, tmp_path: Path) -> None:
+    from battryml import config
+
+    monkeypatch.setattr(config, "PROJECT_ROOT", tmp_path)
+    monkeypatch.delenv("BATTRYML_AUTH_ENABLED", raising=False)
+    assert config.Settings.from_env().auth_enabled is True
+    monkeypatch.setenv("BATTRYML_AUTH_ENABLED", "false")
+    assert config.Settings.from_env().auth_enabled is False
