@@ -455,7 +455,12 @@ def _dense_day(
     cell_bias_mv: float,
     cycle: int,
 ) -> tuple[list[Segment], float]:
-    """One continuous day: night rest, morning use, solar charge, evening use."""
+    """One continuous day: night rest, morning use, solar charge, evening use.
+
+    On a full-discharge day the pack starts discharging ten minutes after it
+    reaches 100 % and runs down to 1 % without a break, so the 95 % to 5 %
+    traversal is mostly discharge time, as in a deliberate capacity check.
+    """
     segments: list[Segment] = []
     cursor = day_start
     soc = soc_start
@@ -490,7 +495,10 @@ def _dense_day(
         move(soc - 12.0, -18.0, night)
     hold(day_start.replace(hour=10), ambient_c)
     move(100.0 if full_discharge else 96.0, charge_current_a, noon)
-    hold(day_start.replace(hour=17), noon)
+    if full_discharge:
+        hold(cursor + timedelta(minutes=10), noon)
+    else:
+        hold(day_start.replace(hour=17), noon)
     move(1.0 if full_discharge else 30.0, -20.0, ambient_c)
     hold(day_end, night)
     return segments, soc

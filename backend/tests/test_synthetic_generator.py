@@ -70,3 +70,22 @@ def test_dense_writer_splits_each_day_into_its_own_part(tmp_path):
     parts = sorted((tmp_path / "serial=100000099" / "year=2024" / "month=01").glob("*.parquet"))
     assert [path.name for path in parts] == ["part-004.parquet", "part-005.parquet"]
     assert rows == sum(pq.ParquetFile(path).metadata.num_rows for path in parts) == 240
+
+
+def test_full_discharge_day_is_mostly_discharge_between_95_and_5_percent():
+    from datetime import UTC, datetime
+
+    gen = _generator()
+    segments, _ = gen._dense_day(
+        datetime(2024, 1, 4, tzinfo=UTC), soc_start=30.0, true_capacity_ah=63.0,
+        bms_soh_pct=98.0, ambient_c=4.0, charge_current_a=14.0, full_discharge=True,
+        cell_bias_mv=0.0, cycle=1,
+    )
+    peak = max(range(len(segments)), key=lambda index: segments[index].soc_end)
+    charge = segments[peak]
+    tail = segments[peak + 1 :]
+    discharge = next(segment for segment in tail if segment.current_a < 0)
+    assert discharge.soc_end == 1.0
+    above_95 = charge.rows * (100.0 - 95.0) / (charge.soc_end - charge.soc_start)
+    rest = sum(segment.rows for segment in tail[: tail.index(discharge)])
+    assert discharge.rows / (discharge.rows + rest + above_95) >= 0.8
