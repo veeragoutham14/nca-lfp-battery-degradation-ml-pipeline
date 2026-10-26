@@ -8,23 +8,81 @@ Columns follow config/signal_catalog.json. Values are invented for the demo:
 the lab reference 100000017 has exact 100% to 0% discharges so capacity_ml
 can fit a curve, and the field traces include a gap longer than 60 seconds.
 Charge and discharge currents sit outside the +/- 0.5 A rest band.
+
+It also writes the five-minute cell-voltage and temperature aggregates that the
+database import step (purpose electrothermal_history) would produce:
+  brain/data/electrothermal_telemetry/<group>/5m/chemistry=<c>/serial=<id>/year=YYYY/month=MM/
+with <signal>__mean, __min, __max, __std and __count per channel.
+
+With --dense-field-device it adds 100000002 (NCA) and 100000021 (LFP), field
+devices with continuous 1-second data on 16 days in each of four months of 2024.
+The seasonal, BMS SOH recalibration and voltage anomaly analyses need that
+coverage. Each is about 5.5 million rows, so they are opt-in.
+
+Cell voltages follow a chemistry-specific open-circuit voltage curve plus an
+ohmic term whose resistance rises in the cold. Voltage windows, nominal
+voltages and fade ranges are taken from public descriptions of open datasets
+(Severson et al. 2019, Preger et al. 2020 / Sandia, NASA PCoE); see the README
+data section. No measured data is copied.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+import duckdb
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PATH = ROOT / "config" / "signal_catalog.json"
+ELECTROTHERMAL_STATISTICS = (
+    ("mean", "avg"),
+    ("min", "min"),
+    ("max", "max"),
+    ("std", "stddev_pop"),
+    ("count", "count"),
+)
+DENSE_FIELD_SERIAL = 100000002
+DENSE_FIELD_CAPACITY_AH = 64.0
+DENSE_LFP_SERIAL = 100000021
+DENSE_LFP_CAPACITY_AH = 50.0
+
+# Open-circuit voltage in mV against SOC in %. NCA spans the 2.5 to 4.2 V window
+# with a sloped curve; LFP spans 2.0 to 3.6 V with the flat two-phase plateau
+# near its 3.3 V nominal. Both windows are the published cell ratings in the
+# Sandia study (Preger et al. 2020) and the Severson et al. 2019 LFP cells.
+OCV_SOC_PCT = (0.0, 2.0, 5.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 95.0, 100.0)
+OCV_MV = {
+    "NCA": (2950.0, 3200.0, 3330.0, 3450.0, 3560.0, 3630.0, 3690.0,
+            3760.0, 3850.0, 3940.0, 4030.0, 4110.0, 4150.0, 4190.0),
+    "LFP": (2650.0, 2950.0, 3120.0, 3210.0, 3255.0, 3280.0, 3290.0,
+            3295.0, 3300.0, 3315.0, 3330.0, 3340.0, 3360.0, 3450.0),
+}
+CELL_VOLTAGE_WINDOW_MV = {"NCA": (2500.0, 4200.0), "LFP": (2000.0, 3600.0)}
+# Ohmic cell resistance at 25 C in milliohm, and its Arrhenius activation energy.
+CELL_RESISTANCE_MOHM = {"NCA": 1.1, "LFP": 0.9}
+RESISTANCE_ACTIVATION_J_PER_MOL = 20_000.0
+GAS_CONSTANT = 8.314
+
+
+def cell_voltage_mv(
+    soc_pct: np.ndarray, current_a: float, cell_temp_c: np.ndarray, chemistry: str
+) -> np.ndarray:
+    """Open-circuit voltage plus the ohmic drop; charge current is positive."""
+    ocv = np.interp(soc_pct, OCV_SOC_PCT, OCV_MV[chemistry])
+    kelvin = np.asarray(cell_temp_c, dtype=np.float64) + 273.15
+    scale = np.exp(RESISTANCE_ACTIVATION_J_PER_MOL / GAS_CONSTANT * (1.0 / kelvin - 1.0 / 298.15))
+    low, high = CELL_VOLTAGE_WINDOW_MV[chemistry]
+    # Clip at the rated window, as a constant-voltage charge phase would.
+    return np.clip(ocv + current_a * CELL_RESISTANCE_MOHM[chemistry] * scale, low, high)
 CELL_VOLTAGE = re.compile(
     r"batt_batterymodules_mod(\d)_pack(\d)_cellvoltage_mv_(\d+)$"
 )
@@ -78,6 +136,7 @@ def _build_table(
     segment: Segment,
     *,
     elapsed_offset_s: float,
+    chemistry: str = "NCA",
 ) -> tuple[pa.Table, float]:
     rows = segment.rows
     soc = np.linspace(segment.soc_start, segment.soc_end, rows, dtype=np.float64)
@@ -89,7 +148,8 @@ def _build_table(
     times = start_ns + np.arange(rows, dtype=np.int64) * 1_000_000_000
     elapsed = elapsed_offset_s + np.arange(rows, dtype=np.float64)
 
-    cell_base_mv = 3200.0 + 9.0 * soc
+    cell_temp = ambient + abs(segment.current_a) * 0.02
+    cell_base_mv = cell_voltage_mv(soc, segment.current_a, cell_temp, chemistry)
     arrays: list[pa.Array] = []
     names: list[str] = []
     for column in columns:
@@ -188,7 +248,13 @@ def _build_table(
     return table, float(elapsed[-1] + 1.0)
 
 
-def _write_device(columns: list[dict], serial: int, segments: list[Segment], output: Path) -> int:
+def _write_device(
+    columns: list[dict],
+    serial: int,
+    segments: list[Segment],
+    output: Path,
+    chemistry: str = "NCA",
+) -> int:
     grouped: dict[tuple[int, int], list[Segment]] = {}
     for segment in segments:
         grouped.setdefault((segment.start.year, segment.start.month), []).append(segment)
@@ -197,7 +263,9 @@ def _write_device(columns: list[dict], serial: int, segments: list[Segment], out
     for (year, month), month_segments in sorted(grouped.items()):
         tables = []
         for segment in month_segments:
-            table, elapsed = _build_table(columns, serial, segment, elapsed_offset_s=elapsed)
+            table, elapsed = _build_table(
+                columns, serial, segment, elapsed_offset_s=elapsed, chemistry=chemistry
+            )
             tables.append(table)
             if segment.gap_after_s > 1:
                 elapsed += segment.gap_after_s
@@ -250,13 +318,25 @@ def _reference_segments() -> list[Segment]:
     segments: list[Segment] = []
     for index, (year, month) in enumerate(months):
         start = datetime(year, month, 8, 8, 0, tzinfo=UTC)
+        capacity_ah = 56.0 - 0.4 * index
+        # The BMS reports SOH in whole percent, so it moves in visible steps.
+        bms_soh = float(round(100.0 * capacity_ah / 56.0))
         segments.extend(
             _full_cycle(
                 start,
-                capacity_ah=56.0 - 0.4 * index,
-                soh=100.0 - 0.45 * index,
+                capacity_ah=capacity_ah,
+                soh=bms_soh,
                 ambient=ambient[month],
                 cycle=index + 1,
+            )
+        )
+        # Two logged rest days in the chamber, well away from the cycle, give the
+        # BMS SOH recalibration analysis matched control days.
+        rest_start = datetime(year, month, 20, tzinfo=UTC)
+        segments.append(
+            Segment(
+                rest_start, 2 * 86400, 100.0, 100.0, 0.2,
+                bms_soh, ambient[month], index + 1,
             )
         )
     return segments
@@ -305,17 +385,256 @@ def _lfp_segments() -> list[Segment]:
     ]
 
 
-def generate(output: Path) -> None:
+def _write_device_streaming(
+    columns: list[dict],
+    serial: int,
+    segments: list[Segment],
+    output: Path,
+    batch_rows: int = 200_000,
+    chemistry: str = "NCA",
+) -> int:
+    """Write one Parquet file per month in row groups, so long traces stay out of memory."""
+    writers: dict[tuple[int, int], pq.ParquetWriter] = {}
+    buffers: dict[tuple[int, int], list[pa.Table]] = {}
+    written = 0
+    elapsed = 0.0
+
+    def flush(key: tuple[int, int]) -> None:
+        if buffers.get(key):
+            writers[key].write_table(pa.concat_tables(buffers[key]))
+            buffers[key] = []
+
+    try:
+        for segment in sorted(segments, key=lambda item: item.start):
+            table, elapsed = _build_table(
+                columns, serial, segment, elapsed_offset_s=elapsed, chemistry=chemistry
+            )
+            if segment.gap_after_s > 1:
+                elapsed += segment.gap_after_s
+            key = (segment.start.year, segment.start.month)
+            if key not in writers:
+                for other in list(writers):
+                    flush(other)
+                directory = (
+                    output / f"serial={serial}" / f"year={key[0]:04d}" / f"month={key[1]:02d}"
+                )
+                directory.mkdir(parents=True, exist_ok=True)
+                writers[key] = pq.ParquetWriter(
+                    directory / "part-000.parquet", table.schema, compression="snappy"
+                )
+                buffers[key] = []
+            buffers[key].append(table)
+            written += table.num_rows
+            if sum(item.num_rows for item in buffers[key]) >= batch_rows:
+                flush(key)
+    finally:
+        for key, writer in writers.items():
+            flush(key)
+            writer.close()
+    return written
+
+
+def _dense_day(
+    day_start: datetime,
+    *,
+    soc_start: float,
+    true_capacity_ah: float,
+    bms_soh_pct: float,
+    ambient_c: float,
+    charge_current_a: float,
+    full_discharge: bool,
+    cell_bias_mv: float,
+    cycle: int,
+) -> tuple[list[Segment], float]:
+    """One continuous day: night rest, morning use, solar charge, evening use."""
+    segments: list[Segment] = []
+    cursor = day_start
+    soc = soc_start
+    day_end = day_start + timedelta(days=1)
+
+    def hold(until: datetime, ambient: float) -> None:
+        nonlocal cursor
+        rows = int((until - cursor).total_seconds())
+        if rows > 0:
+            segments.append(
+                Segment(cursor, rows, soc, soc, 0.2, bms_soh_pct, ambient, cycle, cell_bias_mv)
+            )
+            cursor = until
+
+    def move(target_soc: float, current_a: float, ambient: float) -> None:
+        nonlocal cursor, soc
+        rows = int(round(abs(target_soc - soc) / 100.0 * true_capacity_ah / abs(current_a) * 3600))
+        rows = min(rows, int((day_end - cursor).total_seconds()))
+        if rows > 0:
+            segments.append(
+                Segment(
+                    cursor, rows, soc, target_soc, current_a, bms_soh_pct,
+                    ambient, cycle, cell_bias_mv,
+                )
+            )
+            cursor += timedelta(seconds=rows)
+            soc = target_soc
+
+    night, noon = ambient_c - 2.0, ambient_c + 3.0
+    hold(day_start.replace(hour=7), night)
+    if soc > 20.0:
+        move(soc - 12.0, -18.0, night)
+    hold(day_start.replace(hour=10), ambient_c)
+    move(100.0 if full_discharge else 96.0, charge_current_a, noon)
+    hold(day_start.replace(hour=17), noon)
+    move(1.0 if full_discharge else 30.0, -20.0, ambient_c)
+    hold(day_end, night)
+    return segments, soc
+
+
+def _arrhenius_factor(temp_c: float, activation_j_per_mol: float = 31_500.0) -> float:
+    """Capacity-fade acceleration relative to 25 C (Wang et al. 2011 activation energy)."""
+    kelvin = temp_c + 273.15
+    return math.exp(activation_j_per_mol / GAS_CONSTANT * (1.0 / 298.15 - 1.0 / kelvin))
+
+
+def _dense_field_segments(
+    *,
+    capacity_ah: float = DENSE_FIELD_CAPACITY_AH,
+    fade_pct_per_day_25c: float = 0.012,
+    anomaly_month: int = 7,
+    anomaly_mv: float = 40.0,
+) -> list[Segment]:
+    """Continuous 1-second home use on 16 days in January, April, July and October 2024.
+
+    About one equivalent full cycle a day. True capacity fades by
+    fade_pct_per_day_25c per day at 25 C, scaled by an Arrhenius factor of the
+    month's temperature: 0.012 %/cycle for NCA and 0.006 %/cycle for LFP sit
+    inside the 80 %-retention lifetimes of roughly 150 to 2,300 cycles reported
+    by Severson et al. 2019 and the Sandia study, with LFP fading slowest. The
+    reported BMS SOH steps down after full discharges in April, July and
+    October, which gives the recalibration analysis events to find. Charging is
+    faster in summer, and cell 7 is offset by anomaly_mv on six days of
+    anomaly_month.
+    """
+    months = ((1, 4.0, 14.0), (4, 13.0, 22.0), (7, 27.0, 36.0), (10, 12.0, 20.0))
+    reported_soh = {1: 98.0, 4: 97.0, 7: 96.0, 10: 95.0}
+    segments: list[Segment] = []
+    soc = 30.0
+    day_index = 0
+    true_soh = 98.5
+    for month, ambient, charge_current in months:
+        bms_soh = reported_soh[month] + (0.0 if month == 1 else 1.0)
+        for day in range(1, 17):
+            day_start = datetime(2024, month, day, tzinfo=UTC)
+            if day_index:
+                true_soh -= fade_pct_per_day_25c * _arrhenius_factor(ambient)
+            full = day in (4, 12)
+            if month != 1 and day == 5:
+                bms_soh = reported_soh[month]
+            seasonal_swing = 1.5 * math.sin(2 * math.pi * day / 16.0)
+            day_segments, soc = _dense_day(
+                day_start,
+                soc_start=soc,
+                true_capacity_ah=capacity_ah * true_soh / 100.0,
+                bms_soh_pct=bms_soh,
+                ambient_c=ambient + seasonal_swing,
+                charge_current_a=charge_current,
+                full_discharge=full,
+                cell_bias_mv=anomaly_mv if month == anomaly_month and 6 <= day <= 11 else 0.0,
+                cycle=day_index + 1,
+            )
+            segments.extend(day_segments)
+            day_index += 1
+    return segments
+
+
+def write_electrothermal_aggregates(
+    raw_output: Path,
+    electrothermal_output: Path,
+    *,
+    serial: int,
+    chemistry: str,
+    module_count: int = 2,
+) -> int:
+    """Aggregate 1-second cell voltages and temperatures into five-minute buckets.
+
+    This mirrors the database import step: time_bucket of five minutes, then
+    AVG, MIN, MAX, STDDEV_POP and COUNT per channel, one dataset per group.
+    """
+    groups = {"cell_voltage": [], "temperature": []}
+    for column in _load_columns():
+        voltage = CELL_VOLTAGE.search(column["name"])
+        temperature = CELL_TEMP.search(column["name"])
+        match = voltage or temperature
+        if match and int(match.group(1)) <= module_count:
+            groups["cell_voltage" if voltage else "temperature"].append(column["name"])
+    written = 0
+    with duckdb.connect() as connection:
+        for month_dir in sorted((raw_output / f"serial={serial}").glob("year=*/month=*")):
+            files = sorted(str(path) for path in month_dir.glob("*.parquet"))
+            for group, names in groups.items():
+                aggregates = ", ".join(
+                    f'{function}("{name}") AS "{name}__{statistic}"'
+                    for name in names
+                    for statistic, function in ELECTROTHERMAL_STATISTICS
+                )
+                frame = connection.execute(
+                    f"""
+                    SELECT time_bucket(INTERVAL '5 minutes', time) AS time,
+                           any_value(serial) AS serial, {aggregates}
+                    FROM read_parquet(?, hive_partitioning=false)
+                    GROUP BY 1 ORDER BY 1
+                    """,
+                    [files],
+                ).fetch_arrow_table()
+                target = (
+                    electrothermal_output / group / "5m" / f"chemistry={chemistry}"
+                    / f"serial={serial}" / month_dir.parent.name / month_dir.name
+                )
+                target.mkdir(parents=True, exist_ok=True)
+                pq.write_table(frame, target / "part-00000.parquet", compression="zstd")
+                written += frame.num_rows
+    return written
+
+
+def generate(
+    output: Path,
+    *,
+    electrothermal_output: Path | None = None,
+    dense_field_device: bool = False,
+) -> None:
     columns = _load_columns()
     output.mkdir(parents=True, exist_ok=True)
-    devices = (
-        (100000017, _reference_segments()),
-        (100000001, _field_segments()),
-        (100000020, _lfp_segments()),
-    )
-    for serial, segments in devices:
-        rows = _write_device(columns, serial, segments, output)
+    devices = [
+        (100000017, "NCA", _reference_segments()),
+        (100000001, "NCA", _field_segments()),
+        (100000020, "LFP", _lfp_segments()),
+    ]
+    for serial, chemistry, segments in devices:
+        rows = _write_device(columns, serial, segments, output, chemistry=chemistry)
         print(f"serial={serial} rows={rows}")
+    if dense_field_device:
+        dense = (
+            (DENSE_FIELD_SERIAL, "NCA", _dense_field_segments()),
+            (
+                DENSE_LFP_SERIAL,
+                "LFP",
+                _dense_field_segments(
+                    capacity_ah=DENSE_LFP_CAPACITY_AH,
+                    fade_pct_per_day_25c=0.006,
+                    anomaly_month=10,
+                    anomaly_mv=-25.0,
+                ),
+            ),
+        )
+        for serial, chemistry, segments in dense:
+            rows = _write_device_streaming(
+                columns, serial, segments, output, chemistry=chemistry
+            )
+            print(f"serial={serial} rows={rows}")
+            devices.append((serial, chemistry, []))
+    if electrothermal_output is not None:
+        for serial, chemistry, _segments in devices:
+            buckets = write_electrothermal_aggregates(
+                output, electrothermal_output, serial=serial, chemistry=chemistry
+            )
+            print(f"serial={serial} electrothermal_5m_rows={buckets}")
 
 
 def main() -> None:
@@ -325,8 +644,36 @@ def main() -> None:
         type=Path,
         default=ROOT / "brain" / "data" / "raw_parquet",
     )
+    parser.add_argument(
+        "--electrothermal-output",
+        type=Path,
+        default=None,
+        help="Five-minute electrothermal root. Defaults to electrothermal_telemetry "
+        "next to --output.",
+    )
+    parser.add_argument(
+        "--no-electrothermal",
+        action="store_true",
+        help="Skip the five-minute cell-voltage and temperature aggregates.",
+    )
+    parser.add_argument(
+        "--dense-field-device",
+        action="store_true",
+        help="Also write the continuous field devices 100000002 (NCA) and 100000021 (LFP), "
+        "about 5.5 M rows each.",
+    )
     args = parser.parse_args()
-    generate(args.output.resolve())
+    output = args.output.resolve()
+    electrothermal = None
+    if not args.no_electrothermal:
+        electrothermal = (
+            args.electrothermal_output or output.parent / "electrothermal_telemetry"
+        ).resolve()
+    generate(
+        output,
+        electrothermal_output=electrothermal,
+        dense_field_device=args.dense_field_device,
+    )
 
 
 if __name__ == "__main__":
