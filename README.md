@@ -10,6 +10,25 @@
 
 This repository is Veera Goutham Venkatesh's own pipeline from a working-student R&D project on home battery storage, published with synthetic data. One-second pack telemetry is turned into operating events, full-cycle capacity, a multi-model degradation fit, and a 10-year state-of-health forecast, then shown in a FastAPI and React dashboard. Every number and screenshot below comes from the synthetic generator.
 
+## Capabilities
+
+| Capability | Where it lives |
+| --- | --- |
+| Event segmentation of 1-second telemetry (rest, charge, discharge, missing) | `brain/src/event_segmentation.py`, `brain/src/build_events.py` |
+| Capacity and SOH from exact full discharges | `brain/src/discharge_cycle_builder.py` (`build_capacity_measurements`, `build_capacity_trend_table`), `brain/src/discharge_capacity_evidence.py` |
+| Degradation modelling, backtests and 10-year SOH forecast | `brain/src/capacity_ml.py` (`fit_degradation_usage_model`, `build_degradation_backtest_table`, `build_cutoff_validation_table`) |
+| Fleet loss-slope check against a full-cycle reference | `brain/src/fixed_slope_verification.py`, `backend/battryml/analytics/nca_capacity_overview.py` |
+| BMS SOH recalibration analysis | `brain/src/bms_soh_recalibration_analysis.py` (`build_recalibration_events`, `build_matched_control_windows`, `build_evidence_comparison`) |
+| SOH gap diagnosis (BMS SOH vs capacity evidence) | `brain/src/soh_gap_diagnosis.py` (`build_reference_curve`, `build_assessments`) |
+| Cell voltage anomaly detection | `brain/src/cell_voltage_anomaly.py`, `brain/src/hierarchical_voltage_anomaly.py` (pack-peer residuals, low-rank reconstruction, EWMA, episodes), `prototype_anomaly/` (Isolation Forest) |
+| Electrothermal features and signal qualification | `brain/src/build_local_electrothermal_features.py`, `brain/src/bms_electrothermal_source_audit.py`, `brain/src/electrothermal_capacity_context.py` |
+| Seasonal operating and charge profiles | `brain/src/seasonal_charge_analysis.py` (`build_daily_stress`, `build_monthly_profiles`, `build_transition_context`) |
+| Data quality checks on raw Parquet | `brain/src/data_validation.py`, `brain/src/validate_raw_parquet.py` |
+| Job API (36 routes) and pipeline plugins | `backend/battryml/api/app.py`, `backend/battryml/jobs.py`, `backend/battryml/plugins/` |
+| Run catalog in DuckDB | `backend/battryml/catalog/database.py`, `backend/battryml/catalog/scanner.py` |
+| Dashboard with ECharts | `frontend/src/components/`, `frontend/src/echarts.ts` |
+| Tests and CI | `brain/tests/`, `backend/tests/`, `.github/workflows/ci.yml` |
+
 ## Why it's useful: one place for the whole fleet
 
 ![Synthetic data. NCA fleet capacity page: 19 field devices compared with the full-cycle reference.](docs/images/app-fleet-comparison.png)
