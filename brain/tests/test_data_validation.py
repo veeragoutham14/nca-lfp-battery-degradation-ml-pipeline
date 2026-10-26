@@ -103,3 +103,20 @@ def test_validation_builds_scientific_readiness_and_reuses_unchanged_inputs(
     assert summary["suspicious_temperature_windows"] == 0
     assert (first / "coverage_by_month.parquet").exists()
     assert (first / "input_manifest.json").exists()
+
+
+def test_findings_frame_writes_mixed_values_as_text(tmp_path):
+    from src.data_validation import _findings_frame
+    from src.io_utils import write_parquet_chunk
+
+    frame = _findings_frame(
+        [
+            {"finding_key": "duplicates", "value": 0},
+            {"finding_key": "freshness", "value": None},
+            {"finding_key": "lifecycle_counter", "value": "sys_cycles"},
+        ]
+    )
+    write_parquet_chunk(frame, tmp_path / "quality_findings.parquet", compression="snappy")
+
+    assert list(frame["value"]) == ["0", None, "sys_cycles"]
+    assert _findings_frame([{"finding_key": "duplicates", "value": 3}])["value"].iloc[0] == 3

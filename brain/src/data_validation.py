@@ -430,6 +430,19 @@ def _feature_inventory(
     return topology, summary, supporting
 
 
+def _findings_frame(findings: list[dict[str, Any]]) -> pd.DataFrame:
+    """Build the findings table; Parquet needs one type, so mixed values become text."""
+    frame = pd.DataFrame(findings)
+    values = [finding.get("value") for finding in findings]
+    if any(isinstance(value, str) for value in values):
+        frame["value"] = pd.Series(
+            [None if value is None else str(value) for value in values],
+            index=frame.index,
+            dtype=object,
+        )
+    return frame
+
+
 def validate_device(
     *,
     serial: str,
@@ -585,7 +598,7 @@ def validate_device(
             else "BMS lifecycle counter is present; semantics still require owner verification.",
         },
     ]
-    quality_findings = pd.DataFrame(findings)
+    quality_findings = _findings_frame(findings)
     monthly["month"] = pd.to_datetime(monthly["month"], utc=True)
     monthly["one_second_available"] = True
     feature_months: set[str] = set()
