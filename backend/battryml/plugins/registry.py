@@ -2,6 +2,11 @@ from __future__ import annotations
 
 from battryml.plugins.base import PipelinePlugin
 from battryml.plugins.bms_soh_recalibration import BmsSohRecalibrationPlugin
+from battryml.plugins.cell_health import (
+    CellHealthFeaturesPlugin,
+    CellSignalAuditPlugin,
+    CellVoltageAnomalyPlugin,
+)
 from battryml.plugins.data_validation import (
     DataValidationPlugin,
     ElectrothermalImportValidationPlugin,
@@ -61,6 +66,9 @@ def build_default_registry() -> PluginRegistry:
             ElectrothermalSourceAuditPlugin(),
             HierarchicalElectrothermalFeaturesPlugin(),
             HierarchicalVoltageAnomalyPlugin(),
+            CellSignalAuditPlugin(),
+            CellHealthFeaturesPlugin(),
+            CellVoltageAnomalyPlugin(),
             SohSignalAuditPlugin(),
             DischargeCapacityEvidencePlugin(),
             CapacitySohInvestigationPlugin(),

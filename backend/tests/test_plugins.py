@@ -23,6 +23,7 @@ from battryml.plugins.electrothermal import (
     HierarchicalElectrothermalFeaturesPlugin,
     HierarchicalVoltageAnomalyPlugin,
 )
+from battryml.plugins.registry import build_default_registry
 from battryml.plugins.seasonal_charge import SeasonalChargeAnalysisPlugin
 from battryml.plugins.soh_signal_audit import SohSignalAuditPlugin
 from battryml.plugins.veera_fixed_slope import FixedSlopeVerificationPlugin
@@ -616,3 +617,15 @@ def test_raw_import_plugin_builds_lfp_storage_command(
     assert output_dir.name == "chemistry=LFP"
     assert output_dir.parent.name == "raw_parquet"
     assert "--field-resolution" in command
+
+
+def test_default_registry_includes_the_cell_health_chain() -> None:
+    registry = build_default_registry()
+    audit = registry.get("veera.cell_signal_audit.v1")
+    features = registry.get("veera.cell_health_features.v1")
+    anomaly = registry.get("veera.cell_voltage_anomaly.v1")
+    assert features.dependency_stages() == ("cell_signal_audit",)
+    assert anomaly.dependency_stages() == ("cell_health",)
+    # Audit and feature extraction read the source database; the anomaly model reads Parquet.
+    assert audit.needs_database({}) and features.needs_database({})
+    assert not anomaly.needs_database({})

@@ -22,6 +22,7 @@ class CellSignalAuditPlugin(PipelinePlugin):
         "coverage, and physically plausible values."
     )
     output_family = "cell_signal_availability"
+    requires_database = True
     workflow_stage = "extraction"
     device_roles = ("field_tester", "full_cycle_test")
     parameters = (
@@ -117,6 +118,7 @@ class CellHealthFeaturesPlugin(PipelinePlugin):
         "into a disk-efficient feature history."
     )
     output_family = "cell_health_features"
+    requires_database = True
     workflow_stage = "extraction"
     device_roles = ("field_tester", "full_cycle_test")
     requires_stage = "cell_signal_audit"
