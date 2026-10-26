@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+
 from battryml.data.storage_migration import migrate_serial_storage
 
 

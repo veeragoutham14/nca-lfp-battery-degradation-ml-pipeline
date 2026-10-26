@@ -14,7 +14,6 @@ from src.config import SignalColumnConfig, StorageConfig
 from src.io_utils import collect_parquet_files
 from src.logging_utils import configure_logging
 
-
 logger = logging.getLogger(__name__)
 SAFE_LABEL_RE = re.compile(r"[^A-Za-z0-9._-]+")
 

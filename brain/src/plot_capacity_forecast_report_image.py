@@ -7,9 +7,8 @@ import re
 from collections.abc import Sequence
 from pathlib import Path
 
-import pandas as pd
-
 import matplotlib
+import pandas as pd
 
 matplotlib.use("Agg")
 import matplotlib.dates as mdates
@@ -17,7 +16,6 @@ import matplotlib.pyplot as plt
 
 from src.config import StorageConfig
 from src.logging_utils import configure_logging
-
 
 logger = logging.getLogger(__name__)
 SAFE_LABEL_RE = re.compile(r"[^A-Za-z0-9._-]+")

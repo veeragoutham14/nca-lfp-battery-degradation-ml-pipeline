@@ -2,13 +2,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from src.config import (
-    TS_COL,
-    SOC_COL,
     CURRENT_COL,
-    VOLTAGE_COL,
     POWER_COL,
     REST_A,
     ROLL_S,
+    SOC_COL,
+    TS_COL,
+    VOLTAGE_COL,
 )
 
 

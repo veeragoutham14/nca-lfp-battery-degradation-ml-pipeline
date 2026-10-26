@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pyarrow as pa
 import pyarrow.parquet as pq
+
 from battryml.analytics.soh_signal_audit import run_audit
 from battryml.battery_profiles import battery_profile
 

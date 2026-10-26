@@ -7,6 +7,7 @@ from pathlib import Path
 import duckdb
 import pyarrow as pa
 import pyarrow.parquet as pq
+
 from battryml.battery_profiles import battery_profile
 from battryml.catalog.database import CatalogDatabase
 from battryml.catalog.repository import CatalogRepository

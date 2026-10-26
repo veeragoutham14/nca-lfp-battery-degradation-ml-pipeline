@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pyarrow as pa
 import pyarrow.parquet as pq
+
 from battryml.analytics.data_validation import (
     build_data_validation,
     build_electrothermal_validation,

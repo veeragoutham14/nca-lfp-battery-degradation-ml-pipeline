@@ -22,7 +22,12 @@ from src.electrothermal_contract import (
     contract_sha256,
     expected_hierarchical_signals,
 )
-from src.io_utils import iter_month_ranges, normalize_timestamp_columns, parse_timestamp, write_parquet_chunk
+from src.io_utils import (
+    iter_month_ranges,
+    normalize_timestamp_columns,
+    parse_timestamp,
+    write_parquet_chunk,
+)
 from src.logging_utils import configure_logging
 
 logger = logging.getLogger(__name__)

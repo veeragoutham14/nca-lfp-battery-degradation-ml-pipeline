@@ -4,7 +4,6 @@ import pandas as pd
 
 from src.config import SignalColumnConfig
 
-
 MODE_CHARGING = "charging"
 MODE_DISCHARGING = "discharging"
 MODE_REST = "rest"

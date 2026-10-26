@@ -19,7 +19,6 @@ from src.db import (
 )
 from src.logging_utils import configure_logging
 
-
 logger = logging.getLogger(__name__)
 
 INITIAL_STATE_COLUMNS = (

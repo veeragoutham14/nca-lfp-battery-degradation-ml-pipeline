@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 
 import pyarrow as pa
 import pyarrow.parquet as pq
+
 from battryml.catalog.database import CatalogDatabase
 from battryml.catalog.repository import CatalogRepository
 from battryml.config import Settings

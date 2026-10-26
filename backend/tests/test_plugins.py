@@ -4,6 +4,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+
 from battryml.battery_profiles import battery_profile, battery_profiles, nominal_capacity_defaults
 from battryml.config import Settings
 from battryml.plugins.bms_soh_recalibration import BmsSohRecalibrationPlugin

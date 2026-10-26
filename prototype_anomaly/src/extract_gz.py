@@ -1,6 +1,6 @@
 import gzip
-import shutil
 import os
+import shutil
 
 
 def extract_all_gz(source_dir: str, target_dir: str) -> None:

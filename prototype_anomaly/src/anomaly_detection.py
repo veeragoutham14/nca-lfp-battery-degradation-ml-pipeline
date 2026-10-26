@@ -1,10 +1,8 @@
 import pandas as pd
 from sklearn.ensemble import IsolationForest
 
-from src.config import ANOMALY_CONTAMINATION, RANDOM_STATE
 from src.anomaly_explainer import add_anomaly_reasons
-from src.config import ANOMALY_FEATURES
-
+from src.config import ANOMALY_CONTAMINATION, ANOMALY_FEATURES, RANDOM_STATE
 
 
 def get_available_anomaly_features(df: pd.DataFrame) -> list[str]:

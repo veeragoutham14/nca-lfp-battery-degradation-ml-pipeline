@@ -18,7 +18,6 @@ from src.config import CapacityModelConfig, StorageConfig
 from src.logging_utils import configure_logging
 from src.plot_capacity_forecast import find_latest_ml_run
 
-
 logger = logging.getLogger(__name__)
 SAFE_LABEL_RE = re.compile(r"[^A-Za-z0-9._-]+")
 

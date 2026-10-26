@@ -8,7 +8,6 @@ from src.extract_configurable_telemetry import (
     load_import_contract,
 )
 
-
 CATALOG = (
     Path(__file__).resolve().parents[2]
     / "config"

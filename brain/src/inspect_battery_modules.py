@@ -22,7 +22,6 @@ from src.db import (
     open_db_connection,
 )
 
-
 DEFAULT_MODULE_COLUMN = "stack_batterymodules"
 
 

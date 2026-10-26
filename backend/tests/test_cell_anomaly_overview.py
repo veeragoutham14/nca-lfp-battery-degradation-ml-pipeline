@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pyarrow as pa
 import pyarrow.parquet as pq
+
 from battryml.analytics.cell_anomaly_overview import (
     build_cell_anomaly_overview,
     build_cell_anomaly_series,

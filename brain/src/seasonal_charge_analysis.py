@@ -12,10 +12,10 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+import duckdb
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
-import duckdb
 
 from src.config import StorageConfig
 from src.io_utils import write_parquet_chunk

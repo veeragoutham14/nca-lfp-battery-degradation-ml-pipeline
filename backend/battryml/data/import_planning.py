@@ -18,8 +18,8 @@ from battryml.data.signal_registry import (
     CAPACITY_CORE_PURPOSE,
     CORE_RESOLUTION,
     CUSTOM_GROUPS_BY_KEY,
-    capacity_core_resolutions,
     ELECTROTHERMAL_HISTORY_PURPOSE,
+    capacity_core_resolutions,
     electrothermal_history_resolutions,
     expected_column_count,
 )

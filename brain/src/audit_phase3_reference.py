@@ -19,7 +19,6 @@ from src.electrothermal_capacity_context import (
 )
 from src.io_utils import write_parquet_chunk
 
-
 CLASS_LABELS = {
     "strict_full_discharge": "strict_100_to_0",
     "near_full_discharge": "supporting_99_to_1",

@@ -15,7 +15,6 @@ from src.config import SignalColumnConfig, StorageConfig
 from src.io_utils import collect_parquet_files
 from src.logging_utils import configure_logging
 
-
 logger = logging.getLogger(__name__)
 
 PART_RE = re.compile(r"part-(\d+)\.parquet$")

@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+
 from battryml.data.storage_paths import (
     discover_serial_chemistries,
     resolve_dataset_location,

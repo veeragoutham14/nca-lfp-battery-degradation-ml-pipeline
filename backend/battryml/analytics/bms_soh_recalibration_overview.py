@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import json
 import math
-from statistics import median
 from datetime import UTC, date, datetime
 from pathlib import Path
+from statistics import median
 from typing import Any
 
 import pyarrow.parquet as pq

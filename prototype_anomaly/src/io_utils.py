@@ -1,14 +1,15 @@
 from pathlib import Path
+
 import pandas as pd
 
 from src.config import (
-    CSV_GLOB,
-    FEATURE_OUTPUT_FILENAME,
     ANOMALY_ALL_OUTPUT_FILENAME,
     ANOMALY_ONLY_OUTPUT_FILENAME,
     ANOMALY_TOP20_OUTPUT_FILENAME,
-    TS_COL,
+    CSV_GLOB,
+    FEATURE_OUTPUT_FILENAME,
     TIMESTAMP_FORMAT,
+    TS_COL,
 )
 
 

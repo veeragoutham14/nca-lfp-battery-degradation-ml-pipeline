@@ -1,6 +1,6 @@
 from pathlib import Path
-import pandas as pd
 
+import pandas as pd
 
 INPUT_DIR = Path(r"data/models")
 EXCEL_DIR = Path(r"data/Excel_view")

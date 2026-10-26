@@ -11,7 +11,6 @@ from psycopg2.extensions import cursor as PsycopgCursor
 
 from src.config import DBConfig
 
-
 DEFAULT_TABLE = "public.battery_telemetry"
 DEFAULT_TIMESTAMP_COL = "time"
 DEFAULT_SERIAL_COL = "serial"

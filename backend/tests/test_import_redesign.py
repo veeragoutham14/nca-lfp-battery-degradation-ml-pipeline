@@ -6,6 +6,7 @@ from pathlib import Path
 import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
+
 from battryml.config import Settings
 from battryml.data.import_planning import (
     build_import_plan,

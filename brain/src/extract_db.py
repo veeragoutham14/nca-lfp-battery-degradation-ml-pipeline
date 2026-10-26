@@ -10,15 +10,6 @@ from typing import Sequence
 from uuid import uuid4
 
 import pandas as pd
-from src.db import (
-    DEFAULT_SERIAL_COL,
-    DEFAULT_TABLE,
-    DEFAULT_TIMESTAMP_COL,
-    build_extract_query,
-    cursor_column_names,
-    open_db_connection,
-)
-from src.logging_utils import configure_logging
 
 from src.config import (
     DBConfig,
@@ -27,6 +18,14 @@ from src.config import (
     get_extraction_column_profile,
     get_extraction_columns,
 )
+from src.db import (
+    DEFAULT_SERIAL_COL,
+    DEFAULT_TABLE,
+    DEFAULT_TIMESTAMP_COL,
+    build_extract_query,
+    cursor_column_names,
+    open_db_connection,
+)
 from src.io_utils import (
     build_partition_dir,
     iter_month_ranges,
@@ -34,6 +33,7 @@ from src.io_utils import (
     parse_timestamp,
     write_parquet_chunk,
 )
+from src.logging_utils import configure_logging
 
 logger = logging.getLogger(__name__)
 PART_FILE_PATTERN = re.compile(r"^part-(\d+)\.parquet$")

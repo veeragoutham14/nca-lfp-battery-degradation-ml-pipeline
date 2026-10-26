@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pyarrow as pa
 import pyarrow.parquet as pq
+
 from battryml.analytics.fleet_soh_audit import _context_metrics, _event_evidence
 
 

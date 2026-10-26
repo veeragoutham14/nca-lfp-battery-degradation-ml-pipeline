@@ -5,10 +5,11 @@ from datetime import UTC, datetime
 
 import pyarrow as pa
 import pyarrow.parquet as pq
+from fastapi.testclient import TestClient
+
 from battryml.api.app import create_app
 from battryml.battery_profiles import battery_profile
 from battryml.config import Settings
-from fastapi.testclient import TestClient
 
 LFP_SERIALS = {
     "100000020",

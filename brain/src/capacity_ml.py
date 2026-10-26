@@ -16,7 +16,6 @@ from src.config import CapacityModelConfig, StorageConfig
 from src.io_utils import write_parquet_chunk
 from src.logging_utils import configure_logging
 
-
 logger = logging.getLogger(__name__)
 
 DEFAULT_SCENARIOS = {

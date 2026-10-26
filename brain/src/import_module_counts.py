@@ -17,7 +17,6 @@ from src.config import DBConfig
 from src.db import DEFAULT_SERIAL_COL, DEFAULT_TABLE, open_db_connection
 from src.logging_utils import configure_logging
 
-
 logger = logging.getLogger(__name__)
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = PROJECT_ROOT / "data" / "processed" / "device_metadata" / "module_counts.parquet"

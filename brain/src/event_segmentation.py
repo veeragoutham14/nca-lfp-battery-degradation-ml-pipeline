@@ -7,7 +7,6 @@ import pandas as pd
 
 from src.config import SignalColumnConfig
 
-
 EVENT_OUTPUT_COLUMNS = (
     "event_id",
     "serial",

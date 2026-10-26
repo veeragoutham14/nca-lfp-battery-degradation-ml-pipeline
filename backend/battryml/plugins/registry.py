@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from battryml.plugins.base import PipelinePlugin
 from battryml.plugins.bms_soh_recalibration import BmsSohRecalibrationPlugin
-from battryml.plugins.data_validation import DataValidationPlugin, ElectrothermalImportValidationPlugin
+from battryml.plugins.data_validation import (
+    DataValidationPlugin,
+    ElectrothermalImportValidationPlugin,
+)
 from battryml.plugins.device_workflow import (
     CapacitySohInvestigationPlugin,
     PrepareAnalysisDataPlugin,

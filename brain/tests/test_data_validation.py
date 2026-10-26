@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
+
 from src.data_validation import validate_device
 from src.electrothermal_contract import expected_hierarchical_signals
 

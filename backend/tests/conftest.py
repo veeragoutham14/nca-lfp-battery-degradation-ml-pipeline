@@ -8,6 +8,7 @@ from pathlib import Path
 import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
+
 from battryml.battery_profiles import battery_profile
 from battryml.config import Settings
 

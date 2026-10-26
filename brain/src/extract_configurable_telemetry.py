@@ -24,17 +24,19 @@ from src.db import (
     cursor_column_names,
     open_db_connection,
 )
+from src.import_module_counts import (
+    build_snapshot as build_module_count_snapshot,
+)
+from src.import_module_counts import (
+    fetch_module_counts,
+    write_serial_snapshot,
+)
 from src.io_utils import (
     build_partition_dir,
     iter_month_ranges,
     normalize_timestamp_columns,
     parse_timestamp,
     write_parquet_chunk,
-)
-from src.import_module_counts import (
-    build_snapshot as build_module_count_snapshot,
-    fetch_module_counts,
-    write_serial_snapshot,
 )
 from src.logging_utils import configure_logging
 
