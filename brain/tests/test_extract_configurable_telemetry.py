@@ -470,3 +470,57 @@ def test_validate_frame_rejects_corrupt_batches() -> None:
             start=start,
             end=end,
         )
+
+
+def test_five_minute_query_has_a_plain_postgres_form() -> None:
+    contract = load_import_contract(
+        CATALOG,
+        chemistry="NCA",
+        resolution_values=[_parse_resolution("soh=5m")],
+    )
+    query = _five_minute_query(
+        table="public.battery_telemetry",
+        timestamp_col="time",
+        serial_col="serial",
+        fields=contract.fields_for("5m"),
+        limit=None,
+        timescale=False,
+    )
+    rendered = str(query)
+
+    assert "time_bucket" not in rendered
+    assert "last(" not in rendered
+    assert "extract(epoch FROM" in rendered
+    assert "array_agg" in rendered
+    assert "AVG" in rendered
+
+
+def test_has_timescaledb_reads_pg_extension() -> None:
+    from src.extract_configurable_telemetry import _has_timescaledb
+
+    class Cursor:
+        def __init__(self, row):
+            self.row = row
+            self.sql = ""
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def execute(self, statement):
+            self.sql = statement
+
+        def fetchone(self):
+            return self.row
+
+    class Connection:
+        def __init__(self, row):
+            self.row = row
+
+        def cursor(self):
+            return Cursor(self.row)
+
+    assert _has_timescaledb(Connection((1,))) is True
+    assert _has_timescaledb(Connection(None)) is False

@@ -503,6 +503,13 @@ def _one_second_query(
     return query
 
 
+def _has_timescaledb(conn: Any) -> bool:
+    """Return True when the TimescaleDB extension is installed on the connection."""
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT 1 FROM pg_extension WHERE extname = 'timescaledb'")
+        return cursor.fetchone() is not None
+
+
 def _five_minute_query(
     *,
     table: str,
@@ -512,7 +519,14 @@ def _five_minute_query(
     limit: int | None,
     include_sample_counts: bool = False,
     statistics: Sequence[str] = (),
+    timescale: bool = True,
 ) -> sql.Composed:
+    """Build the five-minute aggregate query.
+
+    With ``timescale`` the query uses TimescaleDB's time_bucket and last. Without
+    it, the same five-minute buckets and last-value semantics are written in
+    plain PostgreSQL so the import also runs on a database without the extension.
+    """
     aggregates: list[sql.Composed] = []
     for field in fields:
         for column in field.columns:
@@ -535,8 +549,14 @@ def _five_minute_query(
                         )
                     )
                 continue
+            last_sql = (
+                "last({column}, {time})"
+                if timescale
+                else "(array_agg({column} ORDER BY {time} DESC)"
+                " FILTER (WHERE {column} IS NOT NULL))[1]"
+            )
             expression = (
-                sql.SQL("last({column}, {time})")
+                sql.SQL(last_sql)
                 if field.aggregation == "last"
                 else sql.SQL("AVG({column})")
             ).format(column=sql.Identifier(column), time=sql.Identifier(timestamp_col))
@@ -560,8 +580,14 @@ def _five_minute_query(
                         alias=sql.Identifier(column + SAMPLE_COUNT_SUFFIX),
                     )
                 )
+    bucket_sql = (
+        "time_bucket(INTERVAL '5 minutes', {time})"
+        if timescale
+        else "({time} - mod(extract(epoch FROM {time})::numeric, 300)"
+        " * INTERVAL '1 second')"
+    )
     query = sql.SQL(
-        "SELECT time_bucket(INTERVAL '5 minutes', {time}) AS {time_alias}, "
+        "SELECT " + bucket_sql + " AS {time_alias}, "
         "{serial} AS {serial_alias}, {aggregates} FROM {table} "
         "WHERE {serial} = %s AND {time} >= %s AND {time} < %s "
         "GROUP BY 1, 2 ORDER BY 1 ASC"
@@ -619,6 +645,15 @@ def extract_resolution(
     files: list[Path] = []
     total_rows = 0
     with open_db_connection(db_config) as conn:
+        if resolution != "1s" and not _has_timescaledb(conn):
+            query = _five_minute_query(
+                table=table,
+                timestamp_col=timestamp_col,
+                serial_col=serial_col,
+                fields=fields,
+                limit=limit,
+                timescale=False,
+            )
         cursor_name = f"telemetry_{resolution}_{uuid4().hex}"
         with conn.cursor(name=cursor_name) as cursor:
             cursor.itersize = chunk_size
@@ -757,6 +792,17 @@ def extract_target(
         target.fields[0].aggregation if len(target.fields) == 1 else None
     )
     with open_db_connection(db_config) as conn:
+        if target.resolution != "1s" and not _has_timescaledb(conn):
+            query = _five_minute_query(
+                table=table,
+                timestamp_col=timestamp_col,
+                serial_col=serial_col,
+                fields=target.fields,
+                limit=limit,
+                include_sample_counts=include_counts,
+                statistics=target.statistics,
+                timescale=False,
+            )
         cursor_name = f"telemetry_{target.resolution}_{uuid4().hex}"
         with conn.cursor(name=cursor_name) as cursor:
             cursor.itersize = chunk_size
