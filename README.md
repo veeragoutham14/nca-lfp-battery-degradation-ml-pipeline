@@ -10,6 +10,8 @@
 
 This repository is Veera Goutham Venkatesh's own pipeline from a working-student R&D project on home battery storage, published with synthetic data. One-second pack telemetry is turned into operating events, full-cycle capacity, a multi-model degradation fit, and a 10-year state-of-health forecast, then shown in a FastAPI and React dashboard. Every number and screenshot below comes from the synthetic generator.
 
+The original real field telemetry is not included; only synthetic demo data ships with this repository.
+
 ## Capabilities
 
 | Capability | Where it lives |
@@ -77,7 +79,7 @@ The brain reads partitioned Parquet and writes run folders. The API catalogs tho
 
 ## Dashboard
 
-Synthetic data. The API is up and the database extractor is left unconfigured, which is why the badge says database offline.
+Synthetic data. The API is up and the database extractor is left unconfigured, which is why the badge says database offline. The first five screenshots use the small quickstart data.
 
 ![Synthetic data. Chemistry workspace with NCA and LFP.](docs/images/app-chemistry.png)
 
@@ -88,6 +90,20 @@ Synthetic data. The API is up and the database extractor is left unconfigured, w
 ![Synthetic data. Capacity-based SOH forecast in the dashboard.](docs/images/app-forecast.png)
 
 ![Synthetic data. LFP workspace with one imported device.](docs/images/app-lfp.png)
+
+### Analysis pages on the dense demo fleet
+
+These pages need continuous field data, so they use the optional dense devices: `100000002` (NCA, 64 Ah) and `100000021` (LFP, 50 Ah), each with 1-second data on 26 days of January, April, July and October 2024. See [Full demo fleet](#full-demo-fleet) for how to produce them.
+
+![Synthetic data. Device workflow for the NCA field device 100000002 after the full job chain.](docs/images/app-device-workflow.png)
+
+![Synthetic data. Seasonal profile for 100000002: four qualified months with charge and discharge throughput and the reported BMS SOH.](docs/images/app-seasonal.png)
+
+![Synthetic data. Cell-voltage anomaly results for 100000002: one sustained episode on the planted July cell offset.](docs/images/app-cell-anomaly.png)
+
+![Synthetic data. Cell-voltage anomaly results for the LFP device 100000021: one sustained episode on the planted October offset.](docs/images/app-cell-anomaly-lfp.png)
+
+![Synthetic data. Capacity and BMS SOH page for 100000002: three downward BMS SOH steps, each matched to the full discharge before it.](docs/images/app-capacity-bms-soh.png)
 
 ## Results on synthetic data
 
@@ -100,6 +116,16 @@ The lab reference `100000017` has eight exact 100% to 0% discharges. The field d
 ![Synthetic data. Isolation Forest flags the planted cell-voltage offset on the field device.](docs/images/cell_anomaly.png)
 
 ![Synthetic data. Monthly temperature and discharge on the field device.](docs/images/seasonal_temperature.png)
+
+On the dense devices, measured from one run of the full job chain:
+
+| Analysis | Result on `100000002` (NCA) | Result on `100000021` (LFP) |
+| --- | --- | --- |
+| Seasonal profile | 4 of 4 months qualified; monthly mean temperature 3.9, 12.9, 26.9 and 11.9 °C, maximum 32.4 °C | 4 of 4 months qualified, same climate |
+| Cell-voltage anomaly | 1 sustained episode over 7 days in July, the planted offset | 1 sustained episode over 7 days in October, the planted offset |
+| BMS SOH recalibration | 3 downward SOH steps (98 → 97 → 96 → 95 %), 15 matched control windows | 3 steps, 15 matched control windows |
+| Capacity and BMS SOH | 3 of 3 SOH steps matched to the full discharge before them (within 12 h); capacity-based SOH 98.35, 98.15 and 97.84 % against BMS values of 97, 96 and 95 % | not shown on this page (NCA only) |
+| SOH gap diagnosis | 3 transitions assessed, all `indeterminate`: the field device discharges to 1 % rather than 0 %, so no reference cycle of the same class matches | not run (NCA only) |
 
 ## What it does
 
@@ -177,6 +203,19 @@ Possible next steps, not implemented here:
 - Object storage for the Parquet partitions, read by DuckDB or PyArrow.
 - Incremental runs that only process new months for each device.
 
+## Synthetic data and sources
+
+`scripts/generate_synthetic_telemetry.py` writes every file the demo uses. No measured data is copied into this repository. Only published parameters were taken from these open datasets and papers:
+
+| Source | Licence | Used for |
+| --- | --- | --- |
+| Severson et al., "Data-driven prediction of battery cycle life before capacity degradation", *Nature Energy* 4, 383–391 (2019) | CC BY 4.0 | LFP voltage window, range of cycle lives to 80 % capacity |
+| Preger et al., "Degradation of commercial lithium-ion cells as a function of chemistry and cycling conditions", *J. Electrochem. Soc.* 167, 120532 (2020), data via [Battery Archive](https://www.batteryarchive.org/) | CC BY 4.0 | NCA and LFP voltage windows and nominal voltages, faster fade of NCA than LFP |
+| NASA Prognostics Center of Excellence, Li-ion battery aging data set (Saha and Goebel, 2007) | US government work | Shape of capacity fade over cycles |
+| Wang et al., "Cycle-life model for graphite-LiFePO4 cells", *J. Power Sources* 196, 3942–3948 (2011) | paper | Arrhenius activation energy of 31.5 kJ/mol for temperature-dependent fade |
+
+Seasonal ambient temperatures follow a generic Central European climate. The generator is deterministic: the same command writes the same files.
+
 ## Tech stack
 
 | Layer | Tools |
@@ -199,7 +238,23 @@ cd frontend && npm ci && cd ..
 
 The demo generates synthetic telemetry, builds events and the capacity forecast, and opens the dashboard at [http://127.0.0.1:5173](http://127.0.0.1:5173). The API listens on [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
-Copy `.env.example` if you want to point the optional extractor at your own database. Leave the host, name, user, and password empty for the synthetic demo. Authentication is off in that demo so the dashboard opens directly.
+Copy `.env.example` if you want to point the optional extractor at your own database. Leave the host, name, user, and password empty for the synthetic demo. Authentication is off in that demo so the dashboard opens directly. Started any other way, the API asks for a login (`admin` / `battryml` by default) unless `BATTRYML_AUTH_ENABLED=false` is set.
+
+### Full demo fleet
+
+The quickstart keeps the data small. The seasonal, recalibration, anomaly and SOH gap pages need the two dense field devices, which add about 18 million rows (about 1.3 GB of Parquet):
+
+```bash
+python scripts/generate_synthetic_telemetry.py --dense-field-device
+```
+
+Then run the stages for each device from *Machine learning → Device workflow* in the dashboard, top to bottom. The same chain through the job API, in a temporary directory, is the end-to-end test:
+
+```bash
+python -m pytest -m slow backend/tests/test_e2e_demo_chain.py
+```
+
+It generates the fleet, runs 28 jobs (classification, events, analysis-data preparation, anomaly detection, SOH signal audit, discharge evidence, BMS SOH recalibration, capacity and SOH investigation, seasonal profile, and the SOH gap diagnosis) and checks their results. On an 8-vCPU VM with 15.6 GB RAM it takes about 8 minutes (481 s measured), so it is excluded from the default test run and from CI.
 
 ## Project structure
 
@@ -219,7 +274,7 @@ GitHub Actions runs five checks. The ruff lint, the brain tests, the platform su
 
 - `ruff check .` (rules and scoped ignores in `pyproject.toml`)
 - 89 brain tests (`cd brain && python -m pytest`)
-- the platform suite (`python -m pytest`)
+- the platform suite (`python -m pytest`; the slow end-to-end test is opt-in, see [Full demo fleet](#full-demo-fleet))
 - the frontend production build (`cd frontend && npm ci && npm run build`)
 - `python scripts/scan_forbidden.py`
 
