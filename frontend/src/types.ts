@@ -181,6 +181,7 @@ export interface DeviceReadiness {
   soh_recalibration: boolean
   capacity_soh_investigation: boolean
   seasonal_charge_profile: boolean
+  soh_gap_diagnosis: boolean
   classified: boolean
   events: boolean
   capacity_trend: boolean

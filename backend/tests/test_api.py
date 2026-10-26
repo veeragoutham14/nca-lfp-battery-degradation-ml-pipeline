@@ -198,6 +198,7 @@ def test_api_lists_versioned_plugins(platform_settings: Settings) -> None:
             "battryml.capacity_soh_investigation.v1",
             "battryml.prepare_analysis_data.v1",
             "battryml.soh_signal_audit.v1",
+            "battryml.soh_gap_diagnosis.v1",
             "veera.seasonal_charge_analysis.v1",
             "veera.build_events.v1",
             "veera.cell_health_features.v1",

@@ -67,6 +67,7 @@ const FULL_CYCLE_KEY = 'veera.full_cycle_soh.v1'
 const FIXED_SLOPE_KEY = 'veera.fixed_slope_verification.v1'
 const ELECTROTHERMAL_FEATURES_KEY = 'veera.bms_hierarchical_features.v1'
 const DATA_VALIDATION_KEY = 'veera.data_validation.v1'
+const SOH_GAP_DIAGNOSIS_KEY = 'battryml.soh_gap_diagnosis.v1'
 
 const preprocessingSteps: WorkflowStep[] = [
   {
@@ -101,6 +102,14 @@ const analysisSteps: WorkflowStep[] = [
     icon: CalendarRange,
   },
 ]
+
+const sohGapDiagnosisStep: WorkflowStep = {
+  key: SOH_GAP_DIAGNOSIS_KEY,
+  title: 'Diagnose the SOH gap',
+  detail: 'Reference-normalised capacity evidence and a classification for each BMS SOH step',
+  readinessKey: 'soh_gap_diagnosis',
+  icon: CircleAlert,
+}
 
 const fullCycleSteps: WorkflowStep[] = [
   {
@@ -301,7 +310,13 @@ export function MachineLearningPage({
   const steps = selectedDevice?.device_role === 'full_cycle_test'
     ? [...preprocessingSteps, ...fullCycleSteps, electrothermalFeatureStep, analysisValidationStep, ...analysisSteps]
     : selectedDevice?.device_role === 'field_tester'
-      ? [...preprocessingSteps, ...(chemistry === 'NCA' ? fieldSteps : [electrothermalFeatureStep]), analysisValidationStep, ...analysisSteps]
+      ? [
+          ...preprocessingSteps,
+          ...(chemistry === 'NCA' ? fieldSteps : [electrothermalFeatureStep]),
+          analysisValidationStep,
+          ...analysisSteps,
+          ...(chemistry === 'NCA' ? [sohGapDiagnosisStep] : []),
+        ]
       : [...preprocessingSteps, ...analysisSteps]
   const workflowStates = selectedDevice
     ? steps.map((step) => stepState(step, selectedDevice, jobs, pluginMap.get(step.key)))

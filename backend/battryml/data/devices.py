@@ -152,6 +152,7 @@ _WORKFLOW_STAGE_SPECS: dict[str, tuple[str | None, tuple[str, ...]]] = {
         "seasonal_charge_analysis",
         ("capacity_soh_investigation",),
     ),
+    "soh_gap_diagnosis": ("soh_gap_diagnosis", ("seasonal_charge_profile",)),
     "capacity_trend": ("capacity_trend", ("events",)),
     "fixed_slope_verification": (
         "fixed_slope_verification",
@@ -166,6 +167,7 @@ def _workflow_stage_root(processed: Path, folder: str, serial: str) -> Path:
         "data_validation",
         "electrothermal_capacity_context",
         "electrothermal_import_validation",
+        "soh_gap_diagnosis",
     }:
         return processed / folder / f"serial={serial}"
     matches = list((processed / folder).glob(f"chemistry=*/serial={serial}"))
@@ -771,6 +773,7 @@ class DeviceLibraryService:
                             "capacity_soh_investigation" in current_stages
                         ),
                         "seasonal_charge_profile": "seasonal_charge_profile" in current_stages,
+                        "soh_gap_diagnosis": "soh_gap_diagnosis" in current_stages,
                         "classified": "classified" in current_stages,
                         "events": "events" in current_stages,
                         "capacity_trend": "capacity_trend" in current_stages,

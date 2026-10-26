@@ -22,6 +22,7 @@ from battryml.plugins.electrothermal import (
     HierarchicalVoltageAnomalyPlugin,
 )
 from battryml.plugins.seasonal_charge import SeasonalChargeAnalysisPlugin
+from battryml.plugins.soh_gap_diagnosis import SohGapDiagnosisPlugin
 from battryml.plugins.soh_signal_audit import SohSignalAuditPlugin
 from battryml.plugins.veera_fixed_slope import FixedSlopeVerificationPlugin
 from battryml.plugins.veera_ingestion import (
@@ -74,6 +75,7 @@ def build_default_registry() -> PluginRegistry:
             CapacitySohInvestigationPlugin(),
             BmsSohRecalibrationPlugin(),
             SeasonalChargeAnalysisPlugin(),
+            SohGapDiagnosisPlugin(),
             ClassifyRowsPlugin(),
             BuildEventsPlugin(),
             CapacityTrendPlugin(),

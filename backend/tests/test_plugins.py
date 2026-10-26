@@ -629,3 +629,30 @@ def test_default_registry_includes_the_cell_health_chain() -> None:
     # Audit and feature extraction read the source database; the anomaly model reads Parquet.
     assert audit.needs_database({}) and features.needs_database({})
     assert not anomaly.needs_database({})
+
+
+def test_soh_gap_diagnosis_plugin_builds_the_phase4_command(platform_settings: Settings) -> None:
+    plugin = build_default_registry().get("battryml.soh_gap_diagnosis.v1")
+    assert plugin.dependency_stages() == ("seasonal_charge_profile",)
+    command = plugin.build_command(platform_settings, {"serial": "100000002", "module_count": 2})
+    assert command[1:3] == ("-m", "src.soh_gap_diagnosis")
+    args = dict(zip(command[3::2], command[4::2], strict=True))
+    assert args["--chemistry"] == "NCA"
+    nameplate = battery_profile("100000002").nominal_capacity_ah
+    assert args["--field-nameplate-capacity-ah"] == str(nameplate)
+    assert args["--minimum-reference-strict-cycles"] == "500"
+    assert args["--output-root"].endswith("soh_gap_diagnosis")
+
+
+def test_soh_gap_diagnosis_plugin_is_limited_to_nca_field_devices(
+    platform_settings: Settings,
+) -> None:
+    plugin = build_default_registry().get("battryml.soh_gap_diagnosis.v1")
+    with pytest.raises(ValueError, match="NCA"):
+        plugin.validate({"serial": "100000021", "module_count": 2})
+    with pytest.raises(ValueError, match="field_tester"):
+        plugin.validate({"serial": "100000017", "module_count": 2})
+    with pytest.raises(ValueError, match="at least 2"):
+        plugin.validate(
+            {"serial": "100000002", "module_count": 2, "minimum_reference_strict_cycles": 1}
+        )
