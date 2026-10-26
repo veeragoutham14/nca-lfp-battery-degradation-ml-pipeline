@@ -89,3 +89,23 @@ def test_full_discharge_day_is_mostly_discharge_between_95_and_5_percent():
     above_95 = charge.rows * (100.0 - 95.0) / (charge.soc_end - charge.soc_start)
     rest = sum(segment.rows for segment in tail[: tail.index(discharge)])
     assert discharge.rows / (discharge.rows + rest + above_95) >= 0.8
+
+
+def test_bms_soh_steps_when_the_charge_after_a_full_discharge_starts():
+    segments = _generator()._dense_field_segments()
+    steps = [
+        (previous, current)
+        for previous, current in zip(segments, segments[1:], strict=False)
+        if current.soh_pct != previous.soh_pct
+    ]
+    assert [current.soh_pct for _, current in steps] == [97.0, 96.0, 95.0]
+    for previous, current in steps:
+        assert current.start.day == 5 and current.start.hour == 10
+        assert current.current_a > 0  # the step arrives with the charge
+        assert previous.soc_end > 0.0  # the full discharge ended the day before
+        full_discharge = next(
+            segment
+            for segment in reversed(segments[: segments.index(current)])
+            if segment.soc_end == 1.0 and segment.current_a < 0
+        )
+        assert full_discharge.start.day == 4

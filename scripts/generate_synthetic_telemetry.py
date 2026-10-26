@@ -454,12 +454,16 @@ def _dense_day(
     full_discharge: bool,
     cell_bias_mv: float,
     cycle: int,
+    soh_after_charge_start_pct: float | None = None,
 ) -> tuple[list[Segment], float]:
     """One continuous day: night rest, morning use, solar charge, evening use.
 
     On a full-discharge day the pack starts discharging ten minutes after it
     reaches 100 % and runs down to 1 % without a break, so the 95 % to 5 %
     traversal is mostly discharge time, as in a deliberate capacity check.
+    soh_after_charge_start_pct, when given, is the BMS SOH reported from the
+    start of the day's charge on, so a recalibration lands just after the
+    discharge that preceded it has ended.
     """
     segments: list[Segment] = []
     cursor = day_start
@@ -471,7 +475,7 @@ def _dense_day(
         rows = int((until - cursor).total_seconds())
         if rows > 0:
             segments.append(
-                Segment(cursor, rows, soc, soc, 0.2, bms_soh_pct, ambient, cycle, cell_bias_mv)
+                Segment(cursor, rows, soc, soc, 0.2, reported_soh, ambient, cycle, cell_bias_mv)
             )
             cursor = until
 
@@ -482,18 +486,21 @@ def _dense_day(
         if rows > 0:
             segments.append(
                 Segment(
-                    cursor, rows, soc, target_soc, current_a, bms_soh_pct,
+                    cursor, rows, soc, target_soc, current_a, reported_soh,
                     ambient, cycle, cell_bias_mv,
                 )
             )
             cursor += timedelta(seconds=rows)
             soc = target_soc
 
+    reported_soh = bms_soh_pct
     night, noon = ambient_c - 2.0, ambient_c + 3.0
     hold(day_start.replace(hour=7), night)
     if soc > 20.0:
         move(soc - 12.0, -18.0, night)
     hold(day_start.replace(hour=10), ambient_c)
+    if soh_after_charge_start_pct is not None:
+        reported_soh = soh_after_charge_start_pct
     move(100.0 if full_discharge else 96.0, charge_current_a, noon)
     if full_discharge:
         hold(cursor + timedelta(minutes=10), noon)
@@ -525,7 +532,8 @@ def _dense_field_segments(
     inside the 80 %-retention lifetimes of roughly 150 to 2,300 cycles reported
     by Severson et al. 2019 and the Sandia study, with LFP fading slowest. The
     reported BMS SOH steps down after full discharges in April, July and
-    October, which gives the recalibration analysis events to find. Charging is
+    October, which gives the recalibration analysis events to find; each step
+    appears when the next charge starts, after the full discharge has ended. Charging is
     faster in summer, and cell 7 is offset by anomaly_mv on six days of
     anomaly_month. Twenty-six logged days cover more than 80 % of each month, so
     every month qualifies for the seasonal profile.
@@ -543,8 +551,7 @@ def _dense_field_segments(
             if day_index:
                 true_soh -= fade_pct_per_day_25c * _arrhenius_factor(ambient)
             full = day in (4, 12, 20)
-            if month != 1 and day == 5:
-                bms_soh = reported_soh[month]
+            step = month != 1 and day == 5
             seasonal_swing = 1.5 * math.sin(2 * math.pi * day / DENSE_DAYS_PER_MONTH)
             day_segments, soc = _dense_day(
                 day_start,
@@ -556,7 +563,10 @@ def _dense_field_segments(
                 full_discharge=full,
                 cell_bias_mv=anomaly_mv if month == anomaly_month and 6 <= day <= 11 else 0.0,
                 cycle=day_index + 1,
+                soh_after_charge_start_pct=reported_soh[month] if step else None,
             )
+            if step:
+                bms_soh = reported_soh[month]
             segments.extend(day_segments)
             day_index += 1
     return segments
