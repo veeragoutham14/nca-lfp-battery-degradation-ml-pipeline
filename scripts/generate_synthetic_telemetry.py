@@ -3,6 +3,7 @@
 
 Layout:
   brain/data/raw_parquet/serial=<id>/year=YYYY/month=MM/part-000.parquet
+  (the dense field devices write one part-DDD.parquet per day instead)
 
 Columns follow config/signal_catalog.json. Values are invented for the demo:
 the lab reference 100000017 has exact 100% to 0% discharges so capacity_ml
@@ -395,13 +396,18 @@ def _write_device_streaming(
     batch_rows: int = 200_000,
     chemistry: str = "NCA",
 ) -> int:
-    """Write one Parquet file per month in row groups, so long traces stay out of memory."""
-    writers: dict[tuple[int, int], pq.ParquetWriter] = {}
-    buffers: dict[tuple[int, int], list[pa.Table]] = {}
+    """Write one Parquet part per day in row groups, so long traces stay out of memory.
+
+    Daily parts mirror the chunked layout of the raw importer and keep each file
+    small enough for the per-file brain stages (row classification reads a whole
+    file at once).
+    """
+    writers: dict[tuple[int, int, int], pq.ParquetWriter] = {}
+    buffers: dict[tuple[int, int, int], list[pa.Table]] = {}
     written = 0
     elapsed = 0.0
 
-    def flush(key: tuple[int, int]) -> None:
+    def flush(key: tuple[int, int, int]) -> None:
         if buffers.get(key):
             writers[key].write_table(pa.concat_tables(buffers[key]))
             buffers[key] = []
@@ -413,16 +419,17 @@ def _write_device_streaming(
             )
             if segment.gap_after_s > 1:
                 elapsed += segment.gap_after_s
-            key = (segment.start.year, segment.start.month)
+            key = (segment.start.year, segment.start.month, segment.start.day)
             if key not in writers:
                 for other in list(writers):
                     flush(other)
+                    writers.pop(other).close()
                 directory = (
                     output / f"serial={serial}" / f"year={key[0]:04d}" / f"month={key[1]:02d}"
                 )
                 directory.mkdir(parents=True, exist_ok=True)
                 writers[key] = pq.ParquetWriter(
-                    directory / "part-000.parquet", table.schema, compression="zstd"
+                    directory / f"part-{key[2]:03d}.parquet", table.schema, compression="zstd"
                 )
                 buffers[key] = []
             buffers[key].append(table)

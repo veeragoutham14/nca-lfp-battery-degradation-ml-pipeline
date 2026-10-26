@@ -54,3 +54,19 @@ def test_dense_field_plan_is_deterministic_with_soh_steps_and_a_planted_offset()
         capacity_ah=50.0, fade_pct_per_day_25c=0.006, anomaly_month=10, anomaly_mv=-25.0
     )
     assert {segment.start.month for segment in lfp if segment.cell_bias_mv < 0} == {10}
+
+
+def test_dense_writer_splits_each_day_into_its_own_part(tmp_path):
+    from datetime import UTC, datetime
+
+    import pyarrow.parquet as pq
+
+    gen = _generator()
+    segments = [
+        gen.Segment(datetime(2024, 1, day, 6, tzinfo=UTC), 120, 90.0, 80.0, -10.0, 98.0, 5.0, 1)
+        for day in (4, 5)
+    ]
+    rows = gen._write_device_streaming(gen._load_columns(), 100000099, segments, tmp_path)
+    parts = sorted((tmp_path / "serial=100000099" / "year=2024" / "month=01").glob("*.parquet"))
+    assert [path.name for path in parts] == ["part-004.parquet", "part-005.parquet"]
+    assert rows == sum(pq.ParquetFile(path).metadata.num_rows for path in parts) == 240
