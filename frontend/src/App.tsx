@@ -5,7 +5,6 @@ import { ExtractionPage } from './components/ExtractionPage'
 import { ChemistrySelectPage } from './components/ChemistrySelectPage'
 import { HomePage } from './components/HomePage'
 import { LoginPage } from './components/LoginPage'
-import { MachineLearningPage } from './components/MachineLearningPage'
 import { PortalShell, type PortalPage } from './components/PortalShell'
 import type {
   AuthUser,
@@ -26,6 +25,9 @@ interface RouteState {
 const RAW_IMPORT_KEY = 'veera.raw_telemetry_import.v2'
 const PREPARE_ANALYSIS_KEY = 'battryml.prepare_analysis_data.v1'
 const ACTIVE_JOB_STATUSES = new Set(['queued', 'running'])
+const MachineLearningPage = lazy(() => import('./components/MachineLearningPage').then(
+  (module) => ({ default: module.MachineLearningPage }),
+))
 const RunResultsPage = lazy(() => import('./components/RunResultsPage').then(
   (module) => ({ default: module.RunResultsPage }),
 ))
@@ -366,21 +368,23 @@ function App() {
           onOpenMl={openMl}
         />
       ) : route.page === 'ml' ? (
-        <MachineLearningPage
-          chemistry={route.chemistry ?? 'NCA'}
-          devices={chemistryDevices}
-          plugins={plugins}
-          jobs={chemistryJobs.filter((job) => !job.archived_at)}
-          initialSerial={route.serial || selectedSerial}
-          onSerialChange={handleSerialChange}
-          onCreateJob={createJob}
-          onViewRun={viewRun}
-          onOpenCapacitySoh={(serial) => {
-            const prefix = (route.chemistry ?? 'NCA').toLowerCase()
-            window.location.hash = `/${prefix}/gap?serial=${encodeURIComponent(serial)}`
-          }}
-          onUpdateDeviceDisplayName={updateDeviceDisplayName}
-        />
+        <Suspense fallback={<div className="section-loader full-page-loader">Loading machine learning workspace...</div>}>
+          <MachineLearningPage
+            chemistry={route.chemistry ?? 'NCA'}
+            devices={chemistryDevices}
+            plugins={plugins}
+            jobs={chemistryJobs.filter((job) => !job.archived_at)}
+            initialSerial={route.serial || selectedSerial}
+            onSerialChange={handleSerialChange}
+            onCreateJob={createJob}
+            onViewRun={viewRun}
+            onOpenCapacitySoh={(serial) => {
+              const prefix = (route.chemistry ?? 'NCA').toLowerCase()
+              window.location.hash = `/${prefix}/gap?serial=${encodeURIComponent(serial)}`
+            }}
+            onUpdateDeviceDisplayName={updateDeviceDisplayName}
+          />
+        </Suspense>
       ) : route.page === 'seasonal' ? (
         <Suspense fallback={<div className="section-loader full-page-loader">Loading seasonal profiles...</div>}>
           <SeasonalProfilesPage
