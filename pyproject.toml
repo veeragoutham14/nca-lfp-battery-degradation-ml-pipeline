@@ -38,6 +38,8 @@ packages = ["backend/battryml"]
 [tool.pytest.ini_options]
 pythonpath = ["backend"]
 testpaths = ["backend/tests"]
+addopts = "-m 'not slow'"
+markers = ["slow: end-to-end demo chain, about 8 minutes; run with -m slow"]
 
 [tool.ruff]
 line-length = 100
