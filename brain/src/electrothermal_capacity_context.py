@@ -220,6 +220,53 @@ def _extract_event_frame(
     return frame
 
 
+def _extract_local_event_frame(
+    raw_root: Path,
+    *,
+    serial: str,
+    module_count: int,
+    start: pd.Timestamp,
+    end: pd.Timestamp,
+    pre_minutes: int,
+    post_minutes: int,
+    timestamp_col: str,
+) -> pd.DataFrame:
+    """Read one event window from the local raw Parquet store instead of the database."""
+    import duckdb
+
+    files = sorted((raw_root / f"serial={serial}").rglob("*.parquet"))
+    if not files:
+        return pd.DataFrame()
+    signals = expected_hierarchical_signals(module_count)
+    identifiers = [
+        timestamp_col,
+        "batt_soc_pct",
+        "batt_soh_pct",
+        "batt_current_a",
+        "batt_voltage_v",
+        *(signal.source_signal_name for signal in signals),
+    ]
+    columns = ", ".join('"' + item.replace('"', '""') + '"' for item in identifiers)
+    quoted_time = '"' + timestamp_col.replace('"', '""') + '"'
+    connection = duckdb.connect()
+    try:
+        frame = connection.execute(
+            f"SELECT {columns} FROM read_parquet(?, hive_partitioning = false, "
+            f"union_by_name = true) WHERE {quoted_time} >= ? AND {quoted_time} <= ? "
+            f"ORDER BY {quoted_time}",
+            [
+                [str(path) for path in files],
+                (start - pd.Timedelta(minutes=pre_minutes)).to_pydatetime(),
+                (end + pd.Timedelta(minutes=post_minutes)).to_pydatetime(),
+            ],
+        ).df()
+    finally:
+        connection.close()
+    if not frame.empty:
+        frame[timestamp_col] = pd.to_datetime(frame[timestamp_col], utc=True)
+    return frame
+
+
 def _dwell_minutes(mask: pd.Series, timestamps: pd.Series) -> float:
     if len(mask) < 2:
         return 0.0
@@ -602,6 +649,7 @@ def run_phase3(
     output_root: Path,
     cache_root: Path,
     env_file: Path | None = None,
+    raw_root: Path | None = None,
     pre_minutes: int = 30,
     post_minutes: int = 30,
     table: str = DEFAULT_TABLE,
@@ -637,7 +685,13 @@ def run_phase3(
     cache_dir.mkdir(parents=True, exist_ok=True)
     contexts: list[dict[str, Any]] = []
     point_frames: list[pd.DataFrame] = []
-    db_config = DBConfig.from_env(env_file)
+    # Without database settings, event windows come from the local raw Parquet store.
+    try:
+        db_config: DBConfig | None = DBConfig.from_env(env_file)
+    except ValueError:
+        if raw_root is None:
+            raise
+        db_config = None
     with ExitStack() as stack:
         connection = None
         for _, event in selected.iterrows():
@@ -652,6 +706,19 @@ def run_phase3(
             if cache_path.exists():
                 frame = pd.read_parquet(cache_path)
                 frame[timestamp_col] = pd.to_datetime(frame[timestamp_col], utc=True)
+            elif db_config is None:
+                frame = _extract_local_event_frame(
+                    raw_root,
+                    serial=serial,
+                    module_count=module_count,
+                    start=pd.Timestamp(event["start_utc"]),
+                    end=pd.Timestamp(event["end_utc"]),
+                    pre_minutes=pre_minutes,
+                    post_minutes=post_minutes,
+                    timestamp_col=timestamp_col,
+                )
+                if not frame.empty:
+                    write_parquet_chunk(frame, cache_path, compression=compression)
             else:
                 if connection is None:
                     connection = stack.enter_context(open_db_connection(db_config))
@@ -774,6 +841,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--cache-root", type=Path)
     parser.add_argument("--env-file", type=Path)
+    parser.add_argument(
+        "--raw-root",
+        type=Path,
+        help="Local raw Parquet root used when no database is configured.",
+    )
     parser.add_argument("--pre-minutes", type=int, default=30)
     parser.add_argument("--post-minutes", type=int, default=30)
     parser.add_argument("--compression", default="zstd", choices=("zstd", "snappy", "gzip", "none"))
@@ -796,6 +868,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             output_root=args.output_root or storage.data_dir / "processed" / "electrothermal_capacity_context",
             cache_root=args.cache_root or storage.data_dir / "cache" / "electrothermal_event_windows",
             env_file=args.env_file,
+            raw_root=args.raw_root or storage.raw_parquet_dir,
             pre_minutes=args.pre_minutes,
             post_minutes=args.post_minutes,
             compression=compression,
