@@ -32,7 +32,12 @@ def _resolve_path(raw_value: str | None, default: Path) -> Path:
 
 def _source_python(source_root: Path, configured: str | None) -> Path:
     if configured:
-        return _resolve_path(configured, source_root / "venv" / "Scripts" / "python.exe")
+        # Keep symlinks: a venv's bin/python links to the base interpreter, and
+        # resolving it would run jobs outside the venv and its packages.
+        path = Path(configured).expanduser()
+        if not path.is_absolute():
+            path = PROJECT_ROOT / path
+        return Path(os.path.abspath(path))
     windows_python = source_root / "venv" / "Scripts" / "python.exe"
     posix_python = source_root / "venv" / "bin" / "python"
     if windows_python.exists():
