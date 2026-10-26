@@ -102,7 +102,7 @@ def score_hierarchical_windows(
     channel_medians = np.nanmedian(values, axis=0)
     filled = np.where(np.isfinite(values), values, channel_medians)
     peer_residual = np.zeros_like(filled)
-    for (module, pack), group in voltage_channels.groupby(["module_index", "pack_index"]):
+    for (_module, _pack), group in voltage_channels.groupby(["module_index", "pack_index"]):
         indexes = [mean_columns.index(_mean_column(str(item.normalized_name), str(item.unit))) for item in group.itertuples(index=False)]
         pack_values = filled[:, indexes]
         peer_residual[:, indexes] = np.abs(pack_values - np.median(pack_values, axis=1, keepdims=True))

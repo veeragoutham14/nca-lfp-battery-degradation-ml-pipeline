@@ -95,7 +95,7 @@ df = df.dropna(subset=core).reset_index(drop=True)
 # =========================
 # FEATURE ENGINEERING
 # =========================
-I = "batt.current_A"
+I = "batt.current_A"  # noqa: E741 - I/V/P follow the usual symbols for current, voltage, power
 V = "batt.voltage_V"
 P = "batt.power_W"
 

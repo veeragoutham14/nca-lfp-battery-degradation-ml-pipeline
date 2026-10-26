@@ -333,7 +333,7 @@ def normalize_capacity_observations(
             usable = [item for item in selected if item[1] in {"high", "medium"}]
         if event["evidence_class"] != "strict_full_discharge" and len(usable) >= config.minimum_reference_matches:
             ratios = []
-            for _, level, _, reference in usable:
+            for _, _level, _, reference in usable:
                 reference_cumulative = float(reference.get("cumulative_all_discharge_ah") or 0.0)
                 reference_expected = _reference_expected_capacity(reference_cumulative, curve)
                 if reference_expected > 0:
@@ -460,7 +460,7 @@ def build_stress_intervals(
         ("between_capacity_observations", observations, "physical_cycle_id", "end_utc"),
     ]:
         ordered = points.sort_values(time_column)
-        for previous, current in zip(ordered.itertuples(index=False), ordered.iloc[1:].itertuples(index=False)):
+        for previous, current in zip(ordered.itertuples(index=False), ordered.iloc[1:].itertuples(index=False), strict=False):
             start = pd.Timestamp(getattr(previous, time_column))
             end = pd.Timestamp(getattr(current, time_column))
             row = _aggregate_daily_interval(daily, start, end)
@@ -615,7 +615,7 @@ def run_phase4(
     reference_nameplate_ah: float,
     processed_root: Path,
     output_root: Path,
-    config: Phase4Config = Phase4Config(),
+    config: Phase4Config = Phase4Config(),  # noqa: B008 - frozen dataclass, safe as a default
 ) -> Path:
     if chemistry != "NCA":
         raise ValueError("Phase 4A is NCA-only; LFP requires a separate reference model")

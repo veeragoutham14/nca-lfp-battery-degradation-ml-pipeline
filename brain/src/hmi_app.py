@@ -378,7 +378,7 @@ with outputs_tab:
 with audit_tab:
     st.subheader("Execution Trace")
     st.write("Commands are shown here only for audit and debugging. Operators do not need to type them.")
-    for workflow_key, workflow in WORKFLOWS.items():
+    for workflow in WORKFLOWS.values():
         with st.expander(workflow["label"], expanded=False):
             for stage_key in workflow["stages"]:
                 st.code(_quote_command(build_command(stage_key, options)), language="powershell")

@@ -172,7 +172,7 @@ def scan_tree(root: Path, configured: list[str]) -> list[str]:
         relative = path.relative_to(root)
         for needle in _needle_hits(text, list(GENERIC_NEEDLES)):
             hits.append(f"{relative}: contains {needle}")
-        for needle in _needle_hits(text, configured):
+        for _needle in _needle_hits(text, configured):
             hits.append(f"{relative}: contains a configured needle")
         for value in _serial_hits(text):
             hits.append(f"{relative}: 9-digit id {value}")

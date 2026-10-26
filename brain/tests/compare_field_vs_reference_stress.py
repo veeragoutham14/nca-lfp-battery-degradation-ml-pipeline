@@ -89,13 +89,13 @@ def main() -> int:
     # reference first, then field devices
     rows.sort(key=lambda r: (r["serial"] != REFERENCE, r["serial"]))
     labels = ["serial", "months"] + [m[0] for m in METRICS]
-    header = "  ".join(f"{l:>13}" for l in labels)
+    header = "  ".join(f"{label:>13}" for label in labels)
     print(header)
     print("-" * len(header))
     for r in rows:
         vals = []
-        for l in labels:
-            v = r.get(l)
+        for label in labels:
+            v = r.get(label)
             if isinstance(v, str):
                 vals.append(f"{v:>13}")
             elif isinstance(v, int):
