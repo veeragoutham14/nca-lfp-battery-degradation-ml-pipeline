@@ -820,7 +820,7 @@ def run_phase4(
     return run_dir
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Build Phase 4A single-device SOH-gap diagnosis")
     parser.add_argument("--serial", required=True)
     parser.add_argument("--chemistry", required=True, choices=("NCA", "LFP"))
@@ -829,7 +829,15 @@ def main() -> int:
     parser.add_argument("--reference-nameplate-capacity-ah", required=True, type=float)
     parser.add_argument("--processed-root", type=Path)
     parser.add_argument("--output-root", type=Path)
-    args = parser.parse_args()
+    parser.add_argument(
+        "--minimum-reference-strict-cycles",
+        type=int,
+        default=Phase4Config.minimum_reference_strict_cycles,
+        help="Reference gate: valid strict reference capacity cycles needed to fit the curve",
+    )
+    args = parser.parse_args(argv)
+    if args.minimum_reference_strict_cycles < 2:
+        parser.error("--minimum-reference-strict-cycles must be at least 2")
     storage = StorageConfig.from_env()
     processed = args.processed_root or storage.data_dir / "processed"
     run_dir = run_phase4(
@@ -840,6 +848,9 @@ def main() -> int:
         reference_nameplate_ah=args.reference_nameplate_capacity_ah,
         processed_root=processed,
         output_root=args.output_root or processed / "soh_gap_diagnosis",
+        config=Phase4Config(
+            minimum_reference_strict_cycles=args.minimum_reference_strict_cycles
+        ),
     )
     print(f"Phase 4A SOH-gap diagnosis complete: {run_dir}")
     return 0

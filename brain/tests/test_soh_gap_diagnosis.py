@@ -68,3 +68,28 @@ def test_reference_matching_ignores_voltage_and_weakest_group() -> None:
     _, level, reasons = _condition_distance(field, reference, Phase4Config())
     assert level == "high"
     assert reasons == []
+
+
+def test_cli_passes_the_reference_gate_to_phase4(monkeypatch, tmp_path) -> None:
+    import pytest
+
+    from src import soh_gap_diagnosis as module
+
+    captured = {}
+
+    def fake_run_phase4(**kwargs):
+        captured.update(kwargs)
+        return tmp_path
+
+    monkeypatch.setattr(module, "run_phase4", fake_run_phase4)
+    base = [
+        "--serial", "100000099", "--chemistry", "NCA", "--module-count", "2",
+        "--field-nameplate-capacity-ah", "64", "--reference-nameplate-capacity-ah", "56",
+        "--processed-root", str(tmp_path),
+    ]
+    assert module.main(base) == 0
+    assert captured["config"].minimum_reference_strict_cycles == 500
+    assert module.main([*base, "--minimum-reference-strict-cycles", "6"]) == 0
+    assert captured["config"].minimum_reference_strict_cycles == 6
+    with pytest.raises(SystemExit):
+        module.main([*base, "--minimum-reference-strict-cycles", "1"])
