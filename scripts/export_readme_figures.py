@@ -30,7 +30,11 @@ RED = "#bb5148"
 
 
 def _latest_run() -> Path:
-    runs = sorted((ROOT / "brain" / "data" / "processed" / "capacity_ml" / "serial=100000017").glob("ml_run=*"))
+    runs = sorted(
+        (ROOT / "brain" / "data" / "processed" / "capacity_ml" / "serial=100000017").glob(
+            "ml_run=*"
+        )
+    )
     if not runs:
         raise SystemExit("No capacity_ml run found. Run scripts/demo.sh first.")
     return runs[-1]
@@ -71,7 +75,9 @@ def plot_capacity_fade(run: Path) -> None:
     fitted = (
         float(model["baseline_capacity_ah"])
         - float(model["intercept_loss_ah"])
-        - float(model["loss_slope_per_1000ah"]) * (grid - float(model["reference_cumulative_ah"])) / 1000.0
+        - float(model["loss_slope_per_1000ah"])
+        * (grid - float(model["reference_cumulative_ah"]))
+        / 1000.0
     )
     fig, ax = plt.subplots(figsize=(7.2, 4.0))
     _style(ax)
@@ -79,7 +85,9 @@ def plot_capacity_fade(run: Path) -> None:
     ax.scatter(x, y, s=42, color=GOLD, zorder=3, label="Full 100% to 0% discharges")
     ax.set_xlabel("Cumulative discharge (Ah)")
     ax.set_ylabel("Measured capacity (Ah)")
-    ax.set_title("Capacity fade fit  ·  lab reference 100000017", loc="left", color=INK, fontsize=13, pad=10)
+    ax.set_title(
+        "Capacity fade fit  ·  lab reference 100000017", loc="left", color=INK, fontsize=13, pad=10
+    )
     ax.legend(frameon=False)
     _stamp(fig)
     _save(fig, "capacity_fade.png")
@@ -103,8 +111,22 @@ def plot_soh_forecast(run: Path) -> None:
         zorder=1,
         label="95% band",
     )
-    ax.plot(forecast["forecast_timestamp"], lower, color="#0e6b66", linewidth=1.1, linestyle="--", zorder=2)
-    ax.plot(forecast["forecast_timestamp"], upper, color="#0e6b66", linewidth=1.1, linestyle="--", zorder=2)
+    ax.plot(
+        forecast["forecast_timestamp"],
+        lower,
+        color="#0e6b66",
+        linewidth=1.1,
+        linestyle="--",
+        zorder=2,
+    )
+    ax.plot(
+        forecast["forecast_timestamp"],
+        upper,
+        color="#0e6b66",
+        linewidth=1.1,
+        linestyle="--",
+        zorder=2,
+    )
     ax.plot(
         forecast["forecast_timestamp"],
         forecast["predicted_future_soh_pct"],
@@ -123,7 +145,9 @@ def plot_soh_forecast(run: Path) -> None:
     ax.axhline(80, color=RED, linewidth=1.1, linestyle="--", label="80% SOH")
     ax.set_ylim(40, 110)
     ax.set_ylabel("SOH (%)")
-    ax.set_title("SOH forecast  ·  historical-mean usage", loc="left", color=INK, fontsize=13, pad=10)
+    ax.set_title(
+        "SOH forecast  ·  historical-mean usage", loc="left", color=INK, fontsize=13, pad=10
+    )
     ax.legend(frameon=False, ncol=2)
     fig.autofmt_xdate()
     _stamp(fig)
@@ -198,7 +222,13 @@ def plot_anomaly() -> None:
         label="Isolation Forest flag",
     )
     ax.set_ylabel("Cell 7 offset (mV)")
-    ax.set_title("Cell-voltage anomaly  ·  field device 100000001", loc="left", color=INK, fontsize=13, pad=10)
+    ax.set_title(
+        "Cell-voltage anomaly  ·  field device 100000001",
+        loc="left",
+        color=INK,
+        fontsize=13,
+        pad=10,
+    )
     ax.legend(frameon=False)
     fig.autofmt_xdate()
     _stamp(fig, "Synthetic data  ·  prototype Isolation Forest")
@@ -215,20 +245,33 @@ def plot_seasonal() -> None:
         frames.append(frame)
     work = pd.concat(frames, ignore_index=True)
     work["month"] = work["time"].dt.tz_convert("UTC").dt.strftime("%Y-%m")
-    work["discharge_ah"] = np.where(work["batt_current_a"] < -0.5, -work["batt_current_a"], 0.0) / 3600.0
+    work["discharge_ah"] = (
+        np.where(work["batt_current_a"] < -0.5, -work["batt_current_a"], 0.0) / 3600.0
+    )
     monthly = work.groupby("month", as_index=False).agg(
         temperature_c=("sys_temperature1_c", "mean"),
         discharge_ah=("discharge_ah", "sum"),
     )
     fig, ax = plt.subplots(figsize=(7.2, 4.0))
     _style(ax)
-    ax.bar(monthly["month"], monthly["temperature_c"], color="#d7ecec", label="Mean pack temperature")
+    ax.bar(
+        monthly["month"], monthly["temperature_c"], color="#d7ecec", label="Mean pack temperature"
+    )
     ax.set_ylabel("Temperature (°C)")
     twin = ax.twinx()
-    twin.plot(monthly["month"], monthly["discharge_ah"], color=GOLD, marker="o", linewidth=2.2, label="Discharge Ah")
+    twin.plot(
+        monthly["month"],
+        monthly["discharge_ah"],
+        color=GOLD,
+        marker="o",
+        linewidth=2.2,
+        label="Discharge Ah",
+    )
     twin.set_ylabel("Discharge (Ah)")
     twin.spines["top"].set_visible(False)
-    ax.set_title("Seasonal temperature and use  ·  field device", loc="left", color=INK, fontsize=13, pad=10)
+    ax.set_title(
+        "Seasonal temperature and use  ·  field device", loc="left", color=INK, fontsize=13, pad=10
+    )
     ax.tick_params(axis="x", rotation=0)
     _stamp(fig)
     fig.tight_layout()

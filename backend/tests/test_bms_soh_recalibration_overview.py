@@ -313,7 +313,8 @@ def test_bms_soh_recalibration_overview_and_series_are_source_backed(
     assert series["summary"]["phase2"]["strict_full_discharge_rows"] == 1
     assert series["capacity_events"][0]["measurement_quality"] == "high"
     assert series["soh_transitions"][0]["timestamp_quality"] == "exact"
-    assert series["discharge_matches"][0]["primary_preceding_discharge_event_id"] == "phase2_discharge_00001"
+    first_match = series["discharge_matches"][0]
+    assert first_match["primary_preceding_discharge_event_id"] == "phase2_discharge_00001"
     assert series["match_candidates"][0]["evidence_rank"] == 1
     assert series["summary"]["one_second_capacity_validation"]["operational_window_rows"] == 1
     assert series["reference_comparison"]["available"] is False

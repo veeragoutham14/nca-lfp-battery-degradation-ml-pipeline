@@ -422,7 +422,11 @@ class RawTelemetryImportV2Plugin(PipelinePlugin):
             module_count = values.get("module_count")
             if module_count is not None:
                 args.extend(("--module-count", str(module_count)))
-            fixed_electrothermal = electrothermal_history_resolutions() if purpose == ELECTROTHERMAL_HISTORY_PURPOSE else {}
+            fixed_electrothermal = (
+                electrothermal_history_resolutions()
+                if purpose == ELECTROTHERMAL_HISTORY_PURPOSE
+                else {}
+            )
             for field in CUSTOM_GROUP_KEYS:
                 resolution = fixed_electrothermal.get(field) or values.get(f"{field}_resolution")
                 if resolution is None:

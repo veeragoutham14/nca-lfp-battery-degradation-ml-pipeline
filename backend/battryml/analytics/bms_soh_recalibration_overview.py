@@ -167,9 +167,18 @@ def _canonical_capacity_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
             "continuous": _continuity_metrics(rows, "continuous"),
             "interrupted": _continuity_metrics(rows, "interrupted"),
         },
-        "capacity_label_semantics": "Discharge-derived usable-capacity/SOH proxy from a strict 99-1% BMS SOC traversal.",
-        "operational_window_semantics": "SOC-normalized 95-5% discharge evidence is exploratory, not laboratory capacity ground truth.",
-        "claim_limit": "Current integration and SOC boundaries are BMS-derived. The result tests BMS consistency and usable-capacity trend; it is not laboratory ground truth.",
+        "capacity_label_semantics": (
+            "Discharge-derived usable-capacity/SOH proxy from a strict 99-1% BMS SOC traversal."
+        ),
+        "operational_window_semantics": (
+            "SOC-normalized 95-5% discharge evidence is exploratory, "
+            "not laboratory capacity ground truth."
+        ),
+        "claim_limit": (
+            "Current integration and SOC boundaries are BMS-derived. "
+            "The result tests BMS consistency and usable-capacity trend; "
+            "it is not laboratory ground truth."
+        ),
     }
 
 

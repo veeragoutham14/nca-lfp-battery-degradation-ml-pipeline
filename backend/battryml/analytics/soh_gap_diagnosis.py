@@ -43,7 +43,9 @@ def latest_phase4_run(source_root: Path, chemistry: str, serial: str) -> Path | 
     return runs[-1] if runs else None
 
 
-def build_soh_gap_diagnosis(source_root: Path, chemistry: str, serial: str) -> dict[str, Any] | None:
+def build_soh_gap_diagnosis(
+    source_root: Path, chemistry: str, serial: str
+) -> dict[str, Any] | None:
     run = latest_phase4_run(source_root, chemistry, serial)
     if run is None:
         return None

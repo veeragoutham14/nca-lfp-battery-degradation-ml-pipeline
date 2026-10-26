@@ -570,7 +570,10 @@ def test_lfp_variants_load_as_field_testers_without_nameplate_defaults() -> None
 
 
 def test_lfp_serial_has_no_nominal_capacity_default() -> None:
-    assert ("100000020", battery_profile("100000001").nominal_capacity_ah) not in nominal_capacity_defaults()
+    assert (
+        "100000020",
+        battery_profile("100000001").nominal_capacity_ah,
+    ) not in nominal_capacity_defaults()
 
 
 def test_prepare_analysis_plugin_builds_lfp_command() -> None:

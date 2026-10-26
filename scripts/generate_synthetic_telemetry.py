@@ -143,9 +143,19 @@ def _build_table(
             arrays.append(pa.array(current))
         elif name in {"batt_voltage_v", "batt_intermediatevoltage_v"}:
             arrays.append(pa.array(voltage))
-        elif name in {"batt_cellvoltagemax_v", "stack_cellvoltagemax_v", "batt_compensatedcellvoltagemax_v", "stack_compensatedcellvoltagemax_v"}:
+        elif name in {
+            "batt_cellvoltagemax_v",
+            "stack_cellvoltagemax_v",
+            "batt_compensatedcellvoltagemax_v",
+            "stack_compensatedcellvoltagemax_v",
+        }:
             arrays.append(pa.array((cell_base_mv + 13 * 1.5 + segment.cell_bias_mv) / 1000.0))
-        elif name in {"batt_cellvoltagemin_v", "stack_cellvoltagemin_v", "batt_compensatedcellvoltagemin_v", "stack_compensatedcellvoltagemin_v"}:
+        elif name in {
+            "batt_cellvoltagemin_v",
+            "stack_cellvoltagemin_v",
+            "batt_compensatedcellvoltagemin_v",
+            "stack_compensatedcellvoltagemin_v",
+        }:
             arrays.append(pa.array(cell_base_mv / 1000.0))
         elif name in {"batt_modulecount"}:
             arrays.append(pa.array(np.full(rows, 2.0)))
@@ -163,7 +173,12 @@ def _build_table(
             arrays.append(pa.array(elapsed * abs(segment.current_a) * 400.0))
         elif name == "inverter_runtime_s":
             arrays.append(pa.array(elapsed))
-        elif name.endswith("id") or name.endswith("moduleid") or name.endswith("packid") or name.endswith("nodeid"):
+        elif (
+            name.endswith("id")
+            or name.endswith("moduleid")
+            or name.endswith("packid")
+            or name.endswith("nodeid")
+        ):
             digits = re.findall(r"\d+", name)
             arrays.append(pa.array(np.full(rows, float(digits[-1]) if digits else 1.0)))
         else:
@@ -194,7 +209,15 @@ def _write_device(columns: list[dict], serial: int, segments: list[Segment], out
     return written
 
 
-def _full_cycle(start: datetime, *, capacity_ah: float, soh: float, ambient: float, cycle: int, current_a: float = 40.0) -> list[Segment]:
+def _full_cycle(
+    start: datetime,
+    *,
+    capacity_ah: float,
+    soh: float,
+    ambient: float,
+    cycle: int,
+    current_a: float = 40.0,
+) -> list[Segment]:
     discharge_steps = int(round(capacity_ah / current_a * 3600))
     charge_steps = discharge_steps
     cursor = start
@@ -203,19 +226,26 @@ def _full_cycle(start: datetime, *, capacity_ah: float, soh: float, ambient: flo
     ]
     cursor += timedelta(seconds=20)
     segments.append(
-        Segment(cursor, discharge_steps + 1, 100.0, 0.0, -current_a, soh, ambient, cycle, gap_after_s=1)
+        Segment(
+            cursor, discharge_steps + 1, 100.0, 0.0, -current_a, soh, ambient, cycle, gap_after_s=1
+        )
     )
     cursor += timedelta(seconds=discharge_steps + 1)
     segments.append(Segment(cursor, 15, 0.0, 0.0, 0.1, soh, ambient, cycle, gap_after_s=1))
     cursor += timedelta(seconds=15)
     segments.append(
-        Segment(cursor, charge_steps + 1, 0.0, 100.0, current_a, soh, ambient, cycle, gap_after_s=120)
+        Segment(
+            cursor, charge_steps + 1, 0.0, 100.0, current_a, soh, ambient, cycle, gap_after_s=120
+        )
     )
     return segments
 
 
 def _reference_segments() -> list[Segment]:
-    months = [(2024, 1), (2024, 3), (2024, 5), (2024, 7), (2024, 9), (2024, 11), (2025, 1), (2025, 3)]
+    months = [
+        (2024, 1), (2024, 3), (2024, 5), (2024, 7),
+        (2024, 9), (2024, 11), (2025, 1), (2025, 3),
+    ]
     ambient = {1: 6.0, 3: 11.0, 5: 18.0, 7: 28.0, 9: 19.0, 11: 8.0}
     segments: list[Segment] = []
     for index, (year, month) in enumerate(months):
@@ -243,14 +273,22 @@ def _field_segments() -> list[Segment]:
     segments: list[Segment] = []
     for index, (start, ambient, bias, gap) in enumerate(plan, start=1):
         cursor = start
-        segments.append(Segment(cursor, 30, 80.0, 80.0, 0.2, 97.0 - index, ambient, index, gap_after_s=1))
+        segments.append(
+            Segment(cursor, 30, 80.0, 80.0, 0.2, 97.0 - index, ambient, index, gap_after_s=1)
+        )
         cursor += timedelta(seconds=30)
         segments.append(
-            Segment(cursor, 1201, 80.0, 50.0, -12.0, 97.0 - index, ambient, index, cell_bias_mv=bias, gap_after_s=gap)
+            Segment(
+                cursor, 1201, 80.0, 50.0, -12.0, 97.0 - index,
+                ambient, index, cell_bias_mv=bias, gap_after_s=gap,
+            )
         )
         cursor += timedelta(seconds=1201 + gap)
         segments.append(
-            Segment(cursor, 1201, 50.0, 85.0, 10.0, 97.0 - index, ambient, index, cell_bias_mv=bias, gap_after_s=1)
+            Segment(
+                cursor, 1201, 50.0, 85.0, 10.0, 97.0 - index,
+                ambient, index, cell_bias_mv=bias, gap_after_s=1,
+            )
         )
     return segments
 
@@ -260,7 +298,10 @@ def _lfp_segments() -> list[Segment]:
     return [
         Segment(start, 20, 70.0, 70.0, 0.2, 96.0, 9.0, 1, gap_after_s=1),
         Segment(start + timedelta(seconds=20), 901, 70.0, 55.0, -8.0, 96.0, 9.0, 1, gap_after_s=90),
-        Segment(start + timedelta(seconds=20 + 901 + 90), 601, 55.0, 68.0, 8.0, 96.0, 9.0, 1, gap_after_s=1),
+        Segment(
+            start + timedelta(seconds=20 + 901 + 90), 601, 55.0, 68.0, 8.0,
+            96.0, 9.0, 1, gap_after_s=1,
+        ),
     ]
 
 

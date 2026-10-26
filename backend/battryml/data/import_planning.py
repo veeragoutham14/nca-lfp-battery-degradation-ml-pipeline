@@ -231,7 +231,9 @@ def build_import_plan(
     for group_key, resolution in entries:
         group_meta = CUSTOM_GROUPS_BY_KEY.get(group_key)
         if purpose == ELECTROTHERMAL_HISTORY_PURPOSE:
-            dirs = [electrothermal_dataset_root(source_data, group_key, chemistry) / f"serial={serial}"]
+            dirs = [
+                electrothermal_dataset_root(source_data, group_key, chemistry) / f"serial={serial}"
+            ]
         else:
             dirs = serial_scan_dirs(
                 source_data,
