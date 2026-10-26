@@ -568,6 +568,9 @@ def build_physical_discharge_catalog(
                 ),
             }
         )
+    if not records:
+        # No meaningful deep discharge: keep the schema so summaries count zero rows.
+        return pd.DataFrame(columns=EMPTY_CATALOG_COLUMNS)
     return pd.DataFrame.from_records(records)
 
 

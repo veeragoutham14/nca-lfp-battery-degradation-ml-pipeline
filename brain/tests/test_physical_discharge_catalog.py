@@ -208,3 +208,38 @@ def test_catalog_cache_identity_changes_only_when_source_or_configuration_change
         encoding="utf-8",
     )
     assert _cached_catalog(output_root, "field", first["source_identity_sha256"]) == run_dir
+
+
+def test_catalog_without_deep_discharges_writes_an_empty_run(tmp_path, monkeypatch) -> None:
+    import json
+
+    from src import physical_discharge_catalog as module
+
+    rows = [
+        _event("d1", "discharging", "2026-01-01T01:00Z", "2026-01-01T02:00Z", 80, 60, 12.0),
+        _event("c1", "charging", "2026-01-01T02:00Z", "2026-01-01T03:00Z", 60, 80, 12.0),
+    ]
+    events = pd.DataFrame(rows)
+    events["_event_row_id"] = range(len(events))
+    catalog = build_physical_discharge_catalog(
+        events, serial="field", chemistry="NCA", module_count=2,
+        nominal_capacity_ah=FIELD_NOMINAL_AH,
+    )
+    assert catalog.empty
+    assert "meaningful_deep_discharge" in catalog.columns
+
+    monkeypatch.setattr(module, "load_event_table", lambda root, serial: events)
+    monkeypatch.setattr(
+        module, "_source_identity", lambda **kwargs: {"source_identity_sha256": "x"}
+    )
+    run_dir = module.run_catalog(
+        serial="field",
+        chemistry="NCA",
+        module_count=2,
+        nominal_capacity_ah=FIELD_NOMINAL_AH,
+        events_root=tmp_path / "events",
+        output_root=tmp_path / "out",
+    )
+    summary = json.loads((run_dir / "model_summary.json").read_text())
+    assert summary["physical_cycle_rows"] == 0
+    assert summary["meaningful_80pp_rows"] == 0
