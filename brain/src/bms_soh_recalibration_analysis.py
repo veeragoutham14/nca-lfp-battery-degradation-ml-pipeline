@@ -575,6 +575,23 @@ def detect_raw_discharge_evidence(
     return pd.DataFrame.from_records(records)
 
 
+def _empty_controls_like(events: pd.DataFrame) -> pd.DataFrame:
+    """Zero matched controls, with the event evidence schema keyed by anchor time.
+
+    Without SOH-step events or eligible control days no control is matched; the
+    report then shows zero controls instead of failing on missing columns.
+    """
+    columns = [
+        "control_id",
+        "matched_event_id",
+        "match_score",
+        "source_day_coverage_fraction",
+        "anchor_time_utc",
+        *(column for column in events.columns if column != "event_time_utc"),
+    ]
+    return pd.DataFrame(columns=list(dict.fromkeys(columns)))
+
+
 def detect_raw_discharge_evidence_batched(
     raw_root: Path,
     *,
@@ -632,7 +649,20 @@ def detect_raw_discharge_evidence_batched(
         totals["anchor_batches"] += 1
         for key in ("raw_files_considered", "raw_row_groups_read", "raw_rows_read", "raw_rows_retained", "candidate_intervals"):
             totals[key] += int(metrics[key])
-    return pd.concat(outputs, ignore_index=True) if outputs else anchors.copy(), totals
+    if not outputs:
+        # No anchors: return the detector's empty schema so callers can rely on it.
+        empty = detect_raw_discharge_evidence(
+            pd.DataFrame(),
+            anchors,
+            anchor_column=anchor_column,
+            lookback_hours=lookback_hours,
+            start_soc_pct=start_soc_pct,
+            end_soc_pct=end_soc_pct,
+            maximum_integrated_gap_seconds=maximum_integrated_gap_seconds,
+            rest_current_threshold_a=rest_current_threshold_a,
+        )
+        return empty, totals
+    return pd.concat(outputs, ignore_index=True), totals
 
 
 def _persistent_transition(
@@ -2920,6 +2950,8 @@ def run_analysis(
             minimum_discharge_dominance_fraction
         ),
     )
+    if controls.empty:
+        controls = _empty_controls_like(events)
     controls, control_raw_discharge_scan_metrics = detect_raw_discharge_evidence_batched(
         raw_root,
         serial=serial,
