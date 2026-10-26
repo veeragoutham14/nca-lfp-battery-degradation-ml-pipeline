@@ -38,7 +38,10 @@ This repository is Veera Goutham Venkatesh's own pipeline from a working-student
 | NCA fleet comparison (19 devices) | median 81 ms, p95 85 ms (first request 88 ms) |
 | Cell signal overview | median 54 ms, p95 76 ms |
 | Run summary / run series | median 12 ms / 71 ms |
-| Dashboard build | 1.10 MB JS and CSS, 341 kB gzipped |
+| Dashboard build, all files | 1.10 MB JS and CSS, 341 kB gzipped |
+| Dashboard JavaScript on first page load | 268.37 kB, 79.44 kB gzipped (before code splitting: 955.54 kB, 308.01 kB gzipped) |
+
+The first-load figure is the JavaScript that `index.html` loads before the first page renders, as reported by `npm run build` (Vite 6). Splitting React, ECharts, zrender and the icon set into separate vendor chunks and lazy-loading the Machine learning page cut it by about 72% (about 74% gzipped). ECharts now loads only when a chart page opens, and the build no longer warns about chunks over 500 kB. The total size of all files is about the same.
 
 These are single-host numbers on synthetic data, measured with the client on the same machine. The script deletes and regenerates `brain/data/`, needs about 20 GB of free disk, and writes its full report to `var/benchmark.json`. One brain process can take several GB of RAM on six months of data, so keep `--workers` low on small machines.
 
