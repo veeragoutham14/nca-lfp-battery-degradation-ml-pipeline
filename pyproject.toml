@@ -42,6 +42,24 @@ testpaths = ["backend/tests"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+# Directories that hold top-level packages, so isort treats `battryml` and the
+# `src` packages of brain/ and prototype_anomaly/ as first-party.
+src = ["backend", "brain", "prototype_anomaly", "scripts"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI dependency markers are meant to be used as argument defaults.
+extend-immutable-calls = ["fastapi.Depends"]
+
+[tool.ruff.lint.per-file-ignores]
+# The analysis engine (brain/) and the anomaly prototype carry long formula,
+# column-list and report-text lines; wrapping them by hand or with the
+# formatter would rewrite most of these files, so line length is not enforced
+# there. Everything else keeps the 100-character limit.
+"brain/**" = ["E501"]
+"prototype_anomaly/**" = ["E501"]
+# Inline HTML report templates; wrapping them would change the generated HTML.
+"backend/battryml/analytics/fleet_soh_audit.py" = ["E501"]
+"backend/battryml/analytics/soh_signal_audit.py" = ["E501"]
