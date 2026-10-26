@@ -45,6 +45,10 @@ class PipelinePlugin(ABC):
     requires_stage: str | None = None
     requires_stages: tuple[str, ...] = ()
 
+    def needs_database(self, values: dict[str, Any]) -> bool:
+        """Return True when this run, with these values, reads the source database."""
+        return self.requires_database
+
     def dependency_stages(self) -> tuple[str, ...]:
         stages = ([self.requires_stage] if self.requires_stage else []) + list(
             self.requires_stages

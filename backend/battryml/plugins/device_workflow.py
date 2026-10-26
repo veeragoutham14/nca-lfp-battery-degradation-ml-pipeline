@@ -78,6 +78,10 @@ class PrepareAnalysisDataPlugin(_DeviceWorkflowPlugin):
         ParameterDefinition("end", "Raw import end (optional)", "datetime", group="Update"),
     )
 
+    def needs_database(self, values: dict[str, Any]) -> bool:
+        # Only the optional raw import reads the database; the rest is local.
+        return bool(values.get("update_raw"))
+
     def build_command(self, settings: Settings, values: dict[str, Any]) -> tuple[str, ...]:
         values = self.validate(values)
         command = self.workflow_command(values, "prepare")

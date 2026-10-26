@@ -115,7 +115,7 @@ class PipelineJobRunner:
                     "starting the next stage."
                 )
 
-            if plugin.requires_database:
+            if plugin.needs_database(normalized):
                 database = self.settings.source_database_status()
                 if not database["reachable"]:
                     raise ValueError(str(database["message"]))

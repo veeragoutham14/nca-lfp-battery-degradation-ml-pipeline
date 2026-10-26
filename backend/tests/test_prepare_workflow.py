@@ -63,3 +63,13 @@ def test_prepare_keeps_the_source_audit_when_a_database_is_configured(
     device_analysis.prepare_data(_args(), platform_settings)
 
     assert stages[0] == "electrothermal_source_audit"
+
+
+def test_prepare_needs_the_database_only_for_the_raw_import() -> None:
+    from battryml.plugins.device_workflow import PrepareAnalysisDataPlugin
+    from battryml.plugins.electrothermal import ElectrothermalSourceAuditPlugin
+
+    plugin = PrepareAnalysisDataPlugin()
+    assert plugin.needs_database({"update_raw": False}) is False
+    assert plugin.needs_database({"update_raw": True}) is True
+    assert ElectrothermalSourceAuditPlugin().needs_database({}) is True
