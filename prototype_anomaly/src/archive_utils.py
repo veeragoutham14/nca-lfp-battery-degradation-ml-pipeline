@@ -8,16 +8,14 @@ from pathlib import Path
 
 def build_archive_filename(original_name: str, timestamp: str) -> str:
     """
-    Erzeugt aus einem Dateinamen eine archivgeeignete, zeitgestempelte Variante.
+    Create an archive-ready, timestamped variant of a file name.
 
-    Dabei bleibt die urspruengliche Dateiendung erhalten, waehrend der
-    Zeitstempel unmittelbar vor der Endung eingefuegt wird. So koennen mehrere
-    Durchlaeufe desselben Pipelineschritts archiviert werden, ohne dass
-    Namenskollisionen entstehen.
+    The original file extension is kept, and the timestamp is inserted directly
+    before the extension. This way several runs of the same pipeline step can be
+    archived without name collisions.
 
-    Aufrufkontext:
-    Interne Hilfsfunktion fuer die Kopier- und Archivierungsroutinen dieses
-    Moduls.
+    Call context:
+    Internal helper for the copy and archiving routines in this module.
 
     Example:
         anomaly_results_all.csv
@@ -30,16 +28,15 @@ def build_archive_filename(original_name: str, timestamp: str) -> str:
 
 def copy_folder_contents_with_timestamp(src: Path, dst: Path, timestamp: str) -> None:
     """
-    Kopiert den Inhalt eines Quellordners rekursiv in den Archivbereich.
+    Recursively copy the contents of a source folder into the archive area.
 
-    Fuer jede gefundene Datei wird ein neuer Name mit Zeitstempel erzeugt, damit
-    die Archivstruktur historisierte Artefakte enthaelt und keine bestehende
-    Datei ueberschrieben wird. Unterordner werden beibehalten und ebenfalls
-    rekursiv verarbeitet.
+    Every file found gets a new name with a timestamp, so the archive structure
+    holds versioned artefacts and no existing file is overwritten. Subfolders are
+    kept and processed recursively as well.
 
-    Aufrufkontext:
-    Diese Funktion wird von `archive_run_outputs` verwendet, um die temporaeren
-    Ergebnisordner eines Pipeline-Laufs sicher in das Archiv zu ueberfuehren.
+    Call context:
+    Used by `archive_run_outputs` to move the temporary result folders of a
+    pipeline run safely into the archive.
     """
     if not src.exists():
         return
@@ -57,16 +54,14 @@ def copy_folder_contents_with_timestamp(src: Path, dst: Path, timestamp: str) ->
 
 def clear_folder_contents(folder: Path) -> None:
     """
-    Entfernt alle Inhalte eines Arbeitsordners, laesst den Ordner selbst aber bestehen.
+    Remove all contents of a working folder but keep the folder itself.
 
-    Diese Funktion wird genutzt, um nach erfolgreicher Archivierung die
-    transienten Laufartefakte zu loeschen. Dadurch startet der naechste Lauf mit
-    einer sauberen Arbeitsumgebung, ohne dass Pfade oder Verzeichnisstruktur neu
-    angelegt werden muessen.
+    Used to delete the transient run artefacts after a successful archive step.
+    The next run then starts with a clean working area without having to
+    recreate paths or the directory structure.
 
-    Aufrufkontext:
-    Wird am Ende von `archive_run_outputs` fuer temporaere Output-Ordner
-    ausgefuehrt.
+    Call context:
+    Runs at the end of `archive_run_outputs` for the temporary output folders.
     """
     if not folder.exists():
         return
@@ -80,15 +75,14 @@ def clear_folder_contents(folder: Path) -> None:
 
 def count_files(folder: Path) -> int:
     """
-    Zaehlt alle Dateien in einem Ordner inklusive aller Unterordner.
+    Count all files in a folder, including all subfolders.
 
-    Die Rueckgabe dient nicht der Fachlogik, sondern der Plausibilisierung des
-    Archivierungsprozesses. Vor und nach dem Kopieren kann damit geprueft werden,
-    ob die erwartete Anzahl an Dateien wirklich uebernommen wurde.
+    The return value is not part of the domain logic; it is a plausibility check
+    for the archiving process. It lets the caller check before and after copying
+    whether the expected number of files was really transferred.
 
-    Aufrufkontext:
-    Wird in `archive_run_outputs` fuer eine einfache Verifikationspruefung
-    eingesetzt.
+    Call context:
+    Used in `archive_run_outputs` for a simple verification check.
     """
     if not folder.exists():
         return 0
@@ -97,16 +91,15 @@ def count_files(folder: Path) -> int:
 
 def build_file_info(path: Path) -> dict | None:
     """
-    Sammelt Basis-Metadaten zu einer einzelnen Datei.
+    Collect basic metadata about a single file.
 
-    Falls die Datei existiert, werden Name, voller Pfad, Dateigroesse und
-    Zeitstempel der letzten Aenderung in einem Dictionary zurueckgegeben. Fehlt
-    die Datei, liefert die Funktion `None`. Damit kann die Archiv-Metadatei
-    spaeter auch nachvollziehbar dokumentieren, welche Eingabedateien zu einem
-    Lauf gehoerten.
+    If the file exists, its name, full path, file size and last-modified
+    timestamp are returned in a dictionary. If the file is missing, the function
+    returns `None`. This lets the archive metadata file record which input files
+    belonged to a run.
 
-    Aufrufkontext:
-    Wird in `archive_run_outputs` beim Schreiben der `metadata.json` genutzt.
+    Call context:
+    Used in `archive_run_outputs` when writing `metadata.json`.
     """
     if not path.exists():
         return None
@@ -128,21 +121,20 @@ def archive_run_outputs(
     extra_metadata: dict | None = None,
 ) -> Path:
     """
-    Archiviert die Ergebnisartefakte eines abgeschlossenen Pipeline-Laufs.
+    Archive the result artefacts of a finished pipeline run.
 
-    Die Funktion erzeugt zuerst ein neues Laufverzeichnis mit Zeitstempel,
-    kopiert relevante Ergebnisordner hinein, legt bei Bedarf eine Snapshot-Kopie
-    der verarbeiteten Feature-Datei ab und schreibt anschliessend eine
-    `metadata.json` mit Zusatzinformationen zum Lauf. Danach wird ueber einen
-    Dateizaehler grob geprueft, ob die Anzahl der archivierten Dateien zur
-    Quellmenge passt. Erst wenn diese Pruefung erfolgreich war, werden die
-    temporaeren Arbeitsordner geleert.
+    The function first creates a new timestamped run directory, copies the
+    relevant result folders into it, stores a snapshot copy of the processed
+    feature file if needed, and then writes a `metadata.json` with additional
+    information about the run. A file counter then roughly checks whether the
+    number of archived files matches the source. Only if this check passes are
+    the temporary working folders cleared.
 
-    Der Rueckgabewert ist der Pfad auf das erzeugte Archivverzeichnis des Runs.
+    The return value is the path to the archive directory created for the run.
 
-    Aufrufkontext:
-    Diese Funktion wird von `src.main.archive_outputs` nach erfolgreicher
-    Anomalie-Erkennung und Ausgabeerzeugung aufgerufen.
+    Call context:
+    Called by `src.main.archive_outputs` after anomaly detection and output
+    generation have finished successfully.
 
     Archives:
       - models_dir

@@ -6,17 +6,16 @@ from src.config import ANOMALY_CONTAMINATION, ANOMALY_FEATURES, RANDOM_STATE
 
 
 def get_available_anomaly_features(df: pd.DataFrame) -> list[str]:
-    """Ermittelt die tatsaechlich nutzbaren Anomalie-Features im uebergebenen DataFrame.
+    """Determine which anomaly features are actually usable in the given DataFrame.
 
-    Die Funktion nimmt die im Feature-Engineering zentral definierte Soll-Liste
-    aller Modell-Features und prueft fuer jedes Feature, ob die entsprechende
-    Spalte im aktuellen Datensatz wirklich vorhanden ist. Dadurch wird
-    verhindert, dass spaetere Modellschritte mit fehlenden Spalten laufen und
-    dabei schwer lesbare Fehler erzeugen.
+    The function takes the target list of all model features defined centrally in
+    feature engineering and checks, for each feature, whether the matching column
+    really exists in the current dataset. This prevents later model steps from
+    running with missing columns and producing hard-to-read errors.
 
-    Aufrufkontext:
-    Diese Funktion wird in `run_isolation_forest` verwendet, um die
-    Modell-Eingaben exakt an den aktuell erzeugten Feature-Stand anzupassen.
+    Call context:
+    Used in `run_isolation_forest` to match the model inputs exactly to the
+    feature set that is currently produced.
     """
     return [c for c in ANOMALY_FEATURES if c in df.columns]
 
@@ -25,24 +24,22 @@ def run_isolation_forest(
     df: pd.DataFrame,
     contamination: float = ANOMALY_CONTAMINATION,
 ) -> pd.DataFrame:
-    """Fuehrt die eigentliche Anomalieerkennung mit einem Isolation-Forest-Modell aus.
+    """Run the actual anomaly detection with an Isolation Forest model.
 
-    Zuerst werden alle fuer die Erkennung verfuegbaren Feature-Spalten
-    ausgewaehlt und in eine numerische Matrix ueberfuehrt. Diese Matrix wird
-    standardisiert, damit Merkmale mit unterschiedlichen Skalen das Modell nicht
-    ungewollt verzerren. Anschliessend wird ein `IsolationForest` trainiert und
-    direkt auf denselben Daten ausgefuehrt, um fuer jede Zeile ein Label
-    (`anomaly`) sowie einen numerischen Score (`anomaly_score`) zu berechnen.
+    First, all feature columns available for detection are selected and turned
+    into a numeric matrix. This matrix is standardised so that features with
+    different scales do not unintentionally bias the model. Then an
+    `IsolationForest` is trained and applied directly to the same data to compute
+    a label (`anomaly`) and a numeric score (`anomaly_score`) for every row.
 
-    Nach der Modellbewertung wird der DataFrame nicht nur mit den rohen
-    Anomalie-Ergebnissen erweitert, sondern auch mit textuellen und
-    strukturierteren Erklaerungs-Spalten aus `add_anomaly_reasons`. Das
-    Rueckgabeobjekt ist deshalb der zentrale, voll angereicherte Datensatz fuer
-    Export, Analyse und Visualisierung.
+    After scoring, the DataFrame is extended not only with the raw anomaly results
+    but also with the textual and more structured explanation columns from
+    `add_anomaly_reasons`. The returned object is therefore the central, fully
+    enriched dataset for export, analysis and visualisation.
 
-    Aufrufkontext:
-    Diese Funktion wird von `src.main.detect_anomalies` als zentraler
-    Modellschritt der Pipeline aufgerufen.
+    Call context:
+    Called by `src.main.detect_anomalies` as the central model step of the
+    pipeline.
     """
     feature_cols = get_available_anomaly_features(df)
 
@@ -86,17 +83,16 @@ def run_isolation_forest(
 
 
 def get_all_anomalies(df: pd.DataFrame) -> pd.DataFrame:
-    """Filtert aus einem bereits bewerteten Datensatz nur die Anomalie-Zeilen heraus.
+    """Filter only the anomaly rows out of an already scored dataset.
 
-    Erwartet wird ein DataFrame, in dem die Spalte `anomaly` bereits vorhanden
-    ist. Genau diese Spalte wird genutzt, um alle Zeilen mit dem vom Modell
-    vergebenen Label `-1` zu extrahieren. Das Ergebnis ist eine Kopie des
-    gefilterten Ausschnitts und kann deshalb gefahrlos weiterverarbeitet oder
-    gespeichert werden.
+    Expects a DataFrame that already contains the `anomaly` column. Exactly this
+    column is used to extract all rows that the model labelled `-1`. The result
+    is a copy of the filtered slice and can therefore be processed further or
+    saved safely.
 
-    Aufrufkontext:
-    Diese Funktion wird in `src.main.detect_anomalies` verwendet, bevor die
-    anomaly-only CSV-Datei geschrieben wird.
+    Call context:
+    Used in `src.main.detect_anomalies` before the anomaly-only CSV file is
+    written.
     """
     if "anomaly" not in df.columns:
         raise ValueError("No anomaly column found. Run anomaly detection first.")
@@ -104,17 +100,16 @@ def get_all_anomalies(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_top_anomalies(df: pd.DataFrame, n: int = 20) -> pd.DataFrame:
-    """Liefert die staerksten Anomalie-Kandidaten anhand des Modell-Scores zurueck.
+    """Return the strongest anomaly candidates based on the model score.
 
-    Die Funktion sortiert den Datensatz nach `anomaly_score` aufsteigend. Bei
-    einem Isolation-Forest bedeuten niedrigere Werte in diesem Kontext staerkere
-    Abweichungen vom normalen Muster. Anschliessend werden nur die ersten `n`
-    Zeilen uebernommen, damit Entwickler oder Analysten schnell die
-    auffaelligsten Faelle inspizieren koennen.
+    The function sorts the dataset by `anomaly_score` in ascending order. For an
+    Isolation Forest, lower values mean stronger deviations from the normal
+    pattern in this context. Only the first `n` rows are kept, so that developers
+    or analysts can quickly inspect the most conspicuous cases.
 
-    Aufrufkontext:
-    Diese Funktion wird in `src.main.detect_anomalies` genutzt, um die kompakte
-    Top-N-Ausgabe fuer die manuelle Sichtpruefung zu erzeugen.
+    Call context:
+    Used in `src.main.detect_anomalies` to produce the compact top-N output for
+    manual review.
     """
     if "anomaly_score" not in df.columns:
         raise ValueError("No anomaly_score column found. Run anomaly detection first.")

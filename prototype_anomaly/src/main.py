@@ -24,17 +24,16 @@ from src.visualization import run_all_visual_checks
 
 
 def extract() -> None:
-    """Fuehrt die komplette Rohdatenaufbereitung bis zur gespeicherten Feature-Datei aus.
+    """Run the complete raw-data preparation up to the saved feature file.
 
-    Der Ablauf umfasst das Einlesen aller Roh-CSV-Dateien, das Preprocessing,
-    das anschliessende Feature Engineering und das Schreiben der finalen
-    Feature-Tabelle in den Processed-Bereich. Diese Funktion bildet damit den
-    Einstiegspunkt fuer alle Faelle, in denen sich die zugrunde liegenden
-    Rohdaten geaendert haben.
+    The flow covers reading all raw CSV files, preprocessing, the subsequent
+    feature engineering and writing the final feature table to the processed
+    area. This function is therefore the entry point whenever the underlying raw
+    data has changed.
 
-    Aufrufkontext:
-    Kann direkt aus `main()` aktiviert werden und dient als vorgelagerter
-    Schritt vor Visualisierung oder Anomalieerkennung.
+    Call context:
+    Can be enabled directly from `main()` and serves as the upstream step before
+    visualisation or anomaly detection.
     """
     print("\n--- Loading raw CSV logs ---")
     df_raw = load_all_csvs(DATA_DIR)
@@ -53,15 +52,15 @@ def extract() -> None:
 
 
 def visualize() -> None:
-    """Laedt die Feature-Tabelle und startet die grafischen Plausibilitaetspruefungen.
+    """Load the feature table and start the graphical plausibility checks.
 
-    Diese Funktion dient nicht der eigentlichen Modellberechnung, sondern der
-    qualitativen Kontrolle der erzeugten Features. Entwickler koennen damit
-    zeitliche Verlaeufe, Verteilungen und Zusammenhaenge inspizieren, bevor sie
-    die Features produktiv fuer die Anomalieerkennung verwenden.
+    This function is not part of the actual model computation; it is for
+    qualitative checking of the created features. Developers can use it to
+    inspect time series, distributions and relationships before using the
+    features for anomaly detection.
 
-    Aufrufkontext:
-    Optionale Pipeline-Funktion, die aus `main()` aktiviert werden kann.
+    Call context:
+    Optional pipeline function that can be enabled from `main()`.
     """
     print("\n--- Loading processed feature table ---")
     df_feat = load_feature_table(OUT_DIR)
@@ -71,17 +70,16 @@ def visualize() -> None:
 
 
 def detect_anomalies() -> None:
-    """Fuehrt den Kernschritt der Anomalieerkennung auf der Feature-Tabelle aus.
+    """Run the core anomaly-detection step on the feature table.
 
-    Zuerst wird die bereits erzeugte Feature-Datei geladen. Anschliessend wird
-    der Datensatz mit dem Isolation-Forest-Modell bewertet, in reine
-    Anomalie-Zeilen und eine Top-Auswahl aufgeteilt und schliesslich in mehrere
-    Ergebnisdateien geschrieben. Optional koennen danach auch Visualisierungen
-    einzelner Anomalie-Features erzeugt werden.
+    First, the previously created feature file is loaded. The dataset is then
+    scored with the Isolation Forest model, split into anomaly-only rows and a top
+    selection, and finally written to several result files. Optionally,
+    visualisations of individual anomaly features can be created afterwards.
 
-    Aufrufkontext:
-    Dies ist der zentrale Laufzeitschritt, der aktuell in `main()`
-    standardmaessig aktiviert ist.
+    Call context:
+    This is the central runtime step and is currently enabled by default in
+    `main()`.
     """
     print("\n--- Loading processed feature table ---")
     df_feat = load_feature_table(OUT_DIR)
@@ -117,16 +115,15 @@ def detect_anomalies() -> None:
 
 
 def archive_outputs(run_label: str = "iforest_pack_v1") -> None:
-    """Archiviert die erzeugten Laufartefakte nach einem erfolgreichen Durchlauf.
+    """Archive the created run artefacts after a successful run.
 
-    Die Funktion uebergibt die relevanten Verzeichnisse und Dateien an die
-    Archivlogik und sorgt dafuer, dass temporaere Modellergebnisse sicher
-    weggeschrieben werden, waehrend die verarbeitete Feature-Datei am gewohnten
-    Ort bestehen bleibt. Das ist besonders hilfreich, wenn mehrere Runs
-    miteinander verglichen oder historisch dokumentiert werden sollen.
+    The function passes the relevant directories and files to the archiving logic
+    and makes sure that temporary model results are stored safely, while the
+    processed feature file stays in its usual place. This is especially helpful
+    when several runs should be compared or documented over time.
 
-    Aufrufkontext:
-    Wird typischerweise in `main()` nach `detect_anomalies` aufgerufen.
+    Call context:
+    Usually called in `main()` after `detect_anomalies`.
     """
     print("\n--- Archiving temporary outputs ---")
 
@@ -148,17 +145,16 @@ def archive_outputs(run_label: str = "iforest_pack_v1") -> None:
 
 
 def main() -> None:
-    """Steuert die aktuell aktivierten Top-Level-Schritte der Pipeline.
+    """Control which top-level pipeline steps are currently enabled.
 
-    In dieser Funktion wird festgelegt, welche Phasen eines Laufs wirklich
-    ausgefuehrt werden, zum Beispiel nur Anomalieerkennung oder zusaetzlich auch
-    Extraktion, Visualisierung und Archivierung. Ausserdem kapselt sie das
-    Fehlerhandling auf oberster Ebene, damit bei Problemen der Grund fuer den
-    Abbruch klar ausgegeben wird.
+    This function decides which phases of a run are actually executed, for
+    example only anomaly detection, or extraction, visualisation and archiving as
+    well. It also wraps the top-level error handling, so that the reason for an
+    abort is reported clearly when something goes wrong.
 
-    Aufrufkontext:
-    Der `__main__`-Block am Dateiende ruft diese Funktion auf, wenn das Modul
-    als Skript gestartet wird.
+    Call context:
+    The `__main__` block at the end of the file calls this function when the
+    module is started as a script.
     """
     try:
         #extract()   # run only when raw data changed

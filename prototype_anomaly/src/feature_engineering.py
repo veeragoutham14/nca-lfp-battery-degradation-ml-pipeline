@@ -19,17 +19,16 @@ from src.config import (
 
 
 def add_dt_feature(df: pd.DataFrame) -> pd.DataFrame:
-    """Erzeugt die zeitliche Schrittweite zwischen zwei aufeinanderfolgenden Zeilen.
+    """Compute the time step between two consecutive rows.
 
-    Aus der Timestamp-Spalte wird die Differenz in Sekunden berechnet und als
-    `dt_s` abgelegt. Fehlende oder nichtpositive Werte werden anschliessend mit
-    einer robusten Ersatzgroesse auf Basis des Medians bereinigt. Das ist
-    wichtig, weil spaetere Ableitungen und zeitbezogene Normierungen nur dann
-    stabil funktionieren, wenn `dt_s` gueltig und positiv ist.
+    The difference in seconds is computed from the timestamp column and stored as
+    `dt_s`. Missing or non-positive values are then replaced with a robust
+    median-based substitute. This matters because later derivatives and
+    time-based normalisations only work reliably when `dt_s` is valid and
+    positive.
 
-    Aufrufkontext:
-    Diese Funktion wird in `build_feature_table` als erster
-    Feature-Engineering-Schritt ausgefuehrt.
+    Call context:
+    Run in `build_feature_table` as the first feature-engineering step.
     """
     df = df.copy()
 
@@ -45,17 +44,16 @@ def add_dt_feature(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_current_voltage_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Leitet grundlegende elektrische Kontext-Features aus Strom und Spannung ab.
+    """Derive basic electrical context features from current and voltage.
 
-    Erzeugt werden unter anderem Absolutwerte, Quadrate sowie diskrete und
-    zeitnormalisierte Aenderungen von Strom und Spannung. Diese Merkmale bilden
-    den elektrischen Kontext fuer die spaetere Anomalieanalyse und werden
-    zusaetzlich von mehreren nachfolgenden Schritten wie Modusklassifikation,
-    Last-Normierung und Rolling-Features benoetigt.
+    Among others, this produces absolute values, squares, and discrete and
+    time-normalised changes of current and voltage. These features form the
+    electrical context for the later anomaly analysis and are also needed by
+    several subsequent steps such as mode classification, load normalisation and
+    rolling features.
 
-    Aufrufkontext:
-    Diese Funktion wird in `build_feature_table` direkt nach `add_dt_feature`
-    aufgerufen.
+    Call context:
+    Called in `build_feature_table` directly after `add_dt_feature`.
     """
     df = df.copy()
 
@@ -75,18 +73,17 @@ def add_current_voltage_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_operating_mode_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Kennzeichnet jede Zeile mit einem Betriebsmodus und markiert Moduswechsel.
+    """Label every row with an operating mode and mark mode changes.
 
-    Auf Basis des Stroms werden die Zeilen in Ruhe, Laden oder Entladen
-    eingeteilt. Darauf aufbauend wird ausserdem erkannt, wann ein
-    Betriebsmoduswechsel stattfindet und wie viele Sekunden seit dem letzten
-    Wechsel vergangen sind. Diese Informationen sind sowohl fuer die
-    Featurebeschreibung als auch fuer die spaetere mode-aware Erklaerung von
-    Anomalien relevant.
+    Based on the current, rows are classified as rest, charge or discharge. On top
+    of that, the function detects when the operating mode changes and how many
+    seconds have passed since the last change. This information is relevant both
+    for describing features and for the later mode-aware explanation of
+    anomalies.
 
-    Aufrufkontext:
-    Die Funktion wird in `build_feature_table` ausgefuehrt; die erzeugten
-    Modusspalten werden spaeter im Erklaerer-Modul weiterverwendet.
+    Call context:
+    Run in `build_feature_table`; the mode columns it creates are reused later in
+    the explainer module.
     """
     df = df.copy()
 
@@ -112,16 +109,15 @@ def add_operating_mode_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_voltage_spread_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Berechnet die Zellspannungs-Spreizung aus Minimum- und Maximum-Spannung.
+    """Compute the cell-voltage spread from the minimum and maximum voltage.
 
-    Dieses Merkmal ist ein direkter Indikator fuer elektrische Unbalance im
-    Batteriesystem. Wenn beide benoetigten Eingangsspalten vorhanden sind, wird
-    ihre Differenz als neues Feature `cell_voltage_spread_V` in den DataFrame
-    geschrieben.
+    This feature is a direct indicator of electrical imbalance in the battery
+    system. If both required input columns are present, their difference is
+    written to the DataFrame as the new feature `cell_voltage_spread_V`.
 
-    Aufrufkontext:
-    Die Funktion wird in `build_feature_table` ausgefuehrt, damit das Merkmal
-    spaeter sowohl fuer das Modell als auch fuer Erklaerungen verfuegbar ist.
+    Call context:
+    Run in `build_feature_table`, so the feature is available later both for the
+    model and for explanations.
     """
     df = df.copy()
 
@@ -133,20 +129,18 @@ def add_voltage_spread_features(df: pd.DataFrame) -> pd.DataFrame:
 
 def add_pack_temperature_features(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Baut pack- und modulbezogene Temperaturmerkmale aus den einzelnen Sensoren auf.
+    Build pack- and module-level temperature features from the individual sensors.
 
-    Fuer jedes Pack werden Mittelwert, Standardabweichung, Maximum, Minimum,
-    Spreizung, Index des heissesten Sensors und Hotspot-Differenz berechnet.
-    Darauf aufbauend werden uebergeordnete Zusammenfassungen ueber alle Packs
-    hinweg gebildet, etwa Temperaturspreizung zwischen Packs, interne
-    Nichtuniformitaet oder Unterschiede innerhalb eines Moduls zwischen zwei
-    Packs. Damit verdichtet die Funktion rohe Sensordaten zu physikalisch
-    interpretierbaren Strukturmerkmalen.
+    For every pack, the mean, standard deviation, maximum, minimum, spread, index
+    of the hottest sensor and hotspot delta are computed. On top of that,
+    higher-level summaries across all packs are built, such as the temperature
+    spread between packs, internal non-uniformity, or differences between the two
+    packs of a module. The function thus condenses raw sensor data into
+    physically interpretable structural features.
 
-    Aufrufkontext:
-    Dies ist einer der zentralen Schritte in `build_feature_table`; viele
-    spaetere Features und praktisch die gesamte thermische Anomalie-Erklaerung
-    bauen darauf auf.
+    Call context:
+    This is one of the central steps in `build_feature_table`; many later
+    features and practically the whole thermal anomaly explanation build on it.
 
     Why:
     - We no longer want global max/min over all 32 sensors.
@@ -233,17 +227,15 @@ def add_pack_temperature_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_temperature_dynamics(df: pd.DataFrame) -> pd.DataFrame:
-    """Berechnet Aenderungsraten fuer bereits erzeugte thermische Summary-Features.
+    """Compute rates of change for the thermal summary features created earlier.
 
-    Statt nur statische Temperaturmuster zu betrachten, erzeugt diese Funktion
-    zusaetzliche Merkmale, die beschreiben, wie schnell sich Spreizung,
-    Standardabweichung oder Median-Abweichung der Packtemperaturen veraendern.
-    Solche Dynamik-Features koennen bei transienten oder sich aufbauenden
-    Anomalien besonders aussagekraeftig sein.
+    Instead of looking only at static temperature patterns, this function adds
+    features that describe how quickly the spread, standard deviation or median
+    deviation of the pack temperatures change. Such dynamic features can be
+    especially informative for transient or building-up anomalies.
 
-    Aufrufkontext:
-    Wird in `build_feature_table` nach `add_pack_temperature_features`
-    ausgefuehrt.
+    Call context:
+    Run in `build_feature_table` after `add_pack_temperature_features`.
     """
     df = df.copy()
 
@@ -260,18 +252,16 @@ def add_temperature_dynamics(df: pd.DataFrame) -> pd.DataFrame:
 
 def add_load_normalized_features(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Erzeugt stromnormalisierte Merkmale fuer Lastabhaengigkeitsanalysen.
+    Create current-normalised features for load-dependency analysis.
 
-    Bestimmte Temperatur- oder Spannungsabweichungen sind unter hoher Last
-    physikalisch anders zu bewerten als im Ruhezustand. Deshalb werden hier
-    vorhandene Kernmerkmale durch den Absolutstrom geteilt, sofern ueberhaupt
-    ausreichend Last anliegt. Bei Ruhephasen werden die Werte bewusst als `NaN`
-    gesetzt, damit spaetere Schritte diese Sonderfaelle kontrolliert behandeln
-    koennen.
+    Some temperature or voltage deviations have to be judged differently under
+    high load than at rest. Existing core features are therefore divided by the
+    absolute current, provided there is enough load at all. During rest phases
+    the values are deliberately set to `NaN`, so later steps can handle these
+    special cases in a controlled way.
 
-    Aufrufkontext:
-    Die Funktion wird in `build_feature_table` ausgefuehrt, bevor finale
-    Zeilenfilter und NaN-Behandlung stattfinden.
+    Call context:
+    Run in `build_feature_table` before the final row filters and NaN handling.
     """
     df = df.copy()
 
@@ -302,17 +292,16 @@ def add_load_normalized_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Berechnet zeitliche Gleitfenster-Features auf Basis des Zeitindex.
+    """Compute rolling-window features based on the time index.
 
-    Nachdem die Grundmerkmale vorhanden sind, werden hier geglaettete Mittel,
-    Standardabweichungen, Maximalwerte und Persistenzsignale ueber ein
-    sekundenbasiertes Rolling-Window berechnet. Dadurch laesst sich besser
-    erkennen, ob ein auffaelliges Muster nur kurzzeitig auftritt oder ueber eine
-    laengere Phase bestehen bleibt.
+    Once the base features exist, smoothed means, standard deviations, maxima and
+    persistence signals are computed over a seconds-based rolling window. This
+    makes it easier to tell whether a conspicuous pattern appears only briefly or
+    persists over a longer phase.
 
-    Aufrufkontext:
-    Wird gegen Ende von `build_feature_table` ausgefuehrt, wenn alle benoetigten
-    Quellmerkmale bereits erzeugt wurden.
+    Call context:
+    Run towards the end of `build_feature_table`, once all required source
+    features have been created.
     """
     df = df.copy()
     df = df.set_index(TS_COL)
@@ -353,17 +342,16 @@ def add_rolling_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_feature_columns() -> list[str]:
-    """Liefert die geordnete Soll-Liste aller vorgesehenen Modell-Features.
+    """Return the ordered target list of all intended model features.
 
-    Diese Funktion definiert zentral, welche erzeugten Spalten spaeter fuer
-    Training, Scoring und Analyse als relevante Merkmale betrachtet werden. Die
-    Liste enthaelt Kontext-, Thermik-, Spannungs-, Dynamik-, Rolling- und
-    optionale Leistungsmerkmale. Doppelte Eintraege werden am Ende entfernt,
-    wobei die urspruengliche Reihenfolge erhalten bleibt.
+    This function defines in one place which of the created columns are treated
+    as relevant features for training, scoring and analysis. The list contains
+    context, thermal, voltage, dynamic, rolling and optional power features.
+    Duplicate entries are removed at the end while the original order is kept.
 
-    Aufrufkontext:
-    Die Funktion wird in `build_feature_table` genutzt, um aus dem kompletten
-    DataFrame die tatsaechlich weiterzureichenden Feature-Spalten auszuwaehlen.
+    Call context:
+    Used in `build_feature_table` to select, from the full DataFrame, the feature
+    columns that are actually passed on.
     """
     cols = [
         # Context you may or may not train on later
@@ -462,21 +450,20 @@ def get_feature_columns() -> list[str]:
 
 def build_feature_table(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
     """
-    Fuehrt die komplette Feature-Engineering-Pipeline aus und bereinigt das Ergebnis.
+    Run the complete feature-engineering pipeline and clean up the result.
 
-    Die Funktion ruft alle einzelnen Engineering-Schritte in der vorgesehenen
-    Reihenfolge auf, bestimmt anschliessend die relevante Feature-Liste und
-    entfernt Zeilen, in denen fuer die Kerndaten unzulaessige Luecken bestehen.
-    Sonderfaelle wie load-normalisierte Features waehrend Ruhephasen werden
-    gesondert behandelt, damit solche Merkmale den Datensatz nicht unnoetig
-    ausduennen.
+    The function calls all individual engineering steps in the intended order,
+    then determines the relevant feature list and removes rows with gaps that are
+    not acceptable for the core data. Special cases such as load-normalised
+    features during rest phases are handled separately, so these features do not
+    thin out the dataset unnecessarily.
 
-    Rueckgabe:
+    Returns:
     - engineered dataframe
     - feature column list
 
-    Aufrufkontext:
-    Diese Funktion wird in `src.main.extract` nach dem Preprocessing aufgerufen.
+    Call context:
+    Called in `src.main.extract` after preprocessing.
     """
     df = add_dt_feature(df)
     df = add_current_voltage_features(df)

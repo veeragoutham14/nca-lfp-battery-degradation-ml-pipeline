@@ -13,16 +13,15 @@ from src.config import (
 
 
 def read_logger_csv(path: Path) -> pd.DataFrame:
-    """Laedt eine einzelne rohe Logger-CSV im erwarteten Exportformat.
+    """Load a single raw logger CSV in the expected export format.
 
-    Die Funktion beruecksichtigt dabei die projektspezifische CSV-Struktur mit
-    Kopfzeilenversatz, Semikolon-Trennung und Komma als Dezimaltrennzeichen.
-    Danach werden die Spaltennamen bereinigt und der Name der Quelldatei in
-    einer eigenen Spalte gespeichert, damit spaeter nachvollziehbar bleibt, aus
-    welcher Datei eine Zeile stammt.
+    The function handles the project-specific CSV structure with a header-row
+    offset, semicolon separators and a comma as the decimal separator. It then
+    cleans up the column names and stores the source file name in its own column,
+    so it stays traceable which file a row came from.
 
-    Aufrufkontext:
-    Diese Funktion wird von `load_all_csvs` pro gefundener Datei aufgerufen.
+    Call context:
+    Called by `load_all_csvs` for every file found.
     """
     df = pd.read_csv(
         path,
@@ -43,16 +42,15 @@ def read_logger_csv(path: Path) -> pd.DataFrame:
 
 
 def load_all_csvs(data_dir: Path) -> pd.DataFrame:
-    """Laedt alle Rohdaten-CSV-Dateien aus einem Verzeichnis und fuegt sie zusammen.
+    """Load all raw CSV files from a directory and combine them.
 
-    Jede Datei wird einzeln ueber `read_logger_csv` eingelesen. Erfolgreich
-    geladene Dateien werden gesammelt, fehlerhafte Dateien nur protokolliert,
-    damit der Gesamtlauf moeglichst robust bleibt. Am Ende werden alle gueltigen
-    Teil-DataFrames untereinander konkateniert und als gemeinsamer Rohdatensatz
-    zurueckgegeben.
+    Each file is read individually via `read_logger_csv`. Files that load
+    successfully are collected; faulty files are only logged, so the overall run
+    stays as robust as possible. Finally, all valid partial DataFrames are
+    concatenated and returned as one combined raw dataset.
 
-    Aufrufkontext:
-    Dies ist der erste Datenlade-Schritt in `src.main.extract`.
+    Call context:
+    This is the first data-loading step in `src.main.extract`.
     """
     files = sorted(data_dir.glob(CSV_GLOB))
     if not files:
@@ -83,16 +81,15 @@ def load_all_csvs(data_dir: Path) -> pd.DataFrame:
 
 
 def save_feature_table(df: pd.DataFrame, out_dir: Path) -> Path:
-    """Speichert die aufbereiteten Feature-Daten als verarbeitete CSV-Datei.
+    """Save the prepared feature data as a processed CSV file.
 
-    Die Funktion schreibt den uebergebenen DataFrame mit den projektspezifischen
-    CSV-Einstellungen in das Zielverzeichnis und gibt den finalen Dateipfad
-    zurueck. Damit steht die Datei spaeter fuer Visualisierung,
-    Anomalieerkennung oder Archivierung konsistent zur Verfuegung.
+    The function writes the given DataFrame with the project-specific CSV
+    settings into the target directory and returns the final file path. The file
+    is then consistently available for visualisation, anomaly detection or
+    archiving.
 
-    Aufrufkontext:
-    Wird in `src.main.extract` nach Abschluss von `build_feature_table`
-    aufgerufen.
+    Call context:
+    Called in `src.main.extract` after `build_feature_table` has finished.
     """
     out_csv = out_dir / FEATURE_OUTPUT_FILENAME
     df.to_csv(
@@ -108,15 +105,14 @@ def save_feature_table(df: pd.DataFrame, out_dir: Path) -> Path:
 
 
 def load_feature_table(out_dir: Path) -> pd.DataFrame:
-    """Laedt die bereits erzeugte Feature-Tabelle wieder aus dem Dateisystem.
+    """Load the previously created feature table back from the file system.
 
-    Zusaetzlich wird die Timestamp-Spalte, falls vorhanden, erneut in ein
-    Datumsformat ueberfuehrt. Die Funktion bildet damit die standardisierte
-    Lade-Schnittstelle fuer alle Pipeline-Schritte, die nicht mit Rohdaten,
-    sondern mit bereits verarbeiteten Features arbeiten.
+    In addition, the timestamp column, if present, is converted back to a
+    datetime type. The function is therefore the standard loading interface for
+    all pipeline steps that work with processed features instead of raw data.
 
-    Aufrufkontext:
-    Wird von `src.main.visualize` und `src.main.detect_anomalies` verwendet.
+    Call context:
+    Used by `src.main.visualize` and `src.main.detect_anomalies`.
     """
     feature_path = out_dir / FEATURE_OUTPUT_FILENAME
     if not feature_path.exists():
@@ -141,17 +137,15 @@ def save_anomaly_tables(
     df_top20: pd.DataFrame,
     out_dir: Path,
 ) -> tuple[Path, Path, Path]:
-    """Schreibt die drei zentralen Ergebnisdateien der Anomalieerkennung auf Disk.
+    """Write the three central result files of the anomaly detection to disk.
 
-    Gespeichert werden der komplette bewertete Datensatz, die reine
-    Anomalie-Teilmenge sowie eine kompakte Top-N-Auswahl der auffaelligsten
-    Faelle. Alle Dateien werden mit einheitlichem CSV-Format geschrieben, damit
-    sie spaeter unkompliziert weiterverwendet, verglichen oder archiviert werden
-    koennen.
+    It saves the complete scored dataset, the anomaly-only subset and a compact
+    top-N selection of the most conspicuous cases. All files are written in the
+    same CSV format, so they can easily be reused, compared or archived later.
 
-    Aufrufkontext:
-    Die Funktion wird in `src.main.detect_anomalies` nach Modellbewertung und
-    Erklaerungsanreicherung ausgefuehrt.
+    Call context:
+    Run in `src.main.detect_anomalies` after model scoring and explanation
+    enrichment.
     """
     all_path = out_dir / ANOMALY_ALL_OUTPUT_FILENAME
     only_path = out_dir / ANOMALY_ONLY_OUTPUT_FILENAME
@@ -178,16 +172,15 @@ def save_anomaly_tables(
 
 
 def load_anomaly_table(path: Path) -> pd.DataFrame:
-    """Laedt eine zuvor gespeicherte Ergebnisdatei der Anomalieerkennung.
+    """Load a previously saved result file of the anomaly detection.
 
-    Diese Hilfsfunktion ist fuer spaetere Analyse-, Notebook- oder
-    Visualisierungszwecke gedacht. Falls die Timestamp-Spalte vorhanden ist,
-    wird sie beim Einlesen direkt in ein Datumsformat konvertiert, damit der
-    Datensatz ohne weitere Vorbereitung weiterverarbeitet werden kann.
+    This helper is meant for later analysis, notebook or visualisation work. If
+    the timestamp column is present, it is converted to a datetime type while
+    reading, so the dataset can be processed further without extra preparation.
 
-    Aufrufkontext:
-    Gedacht als allgemeine Hilfsfunktion fuer nachgelagerte Auswertungen auf den
-    von `save_anomaly_tables` erzeugten Dateien.
+    Call context:
+    Meant as a general helper for downstream evaluations of the files created by
+    `save_anomaly_tables`.
     """
     if not path.exists():
         raise FileNotFoundError(f"Anomaly file not found: {path}")

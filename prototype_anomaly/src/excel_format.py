@@ -8,17 +8,15 @@ EXCEL_DIR = Path(r"data/Excel_view")
 
 def get_smallest_csv(csv_files: list[Path]) -> list[Path]:
     """
-    Waehlt aus einer Liste von CSV-Dateien die kleinste Datei aus.
+    Pick the smallest file from a list of CSV files.
 
-    Das ist nuetzlich, wenn fuer eine schnelle Sichtpruefung oder einen ersten
-    Excel-Export nicht alle Dateien verarbeitet werden sollen. Statt eine
-    einzelne `Path`-Instanz zurueckzugeben, liefert die Funktion bewusst wieder
-    eine Liste, damit der weitere Verarbeitungsfluss in `export_csvs_to_excel`
-    unveraendert bleiben kann.
+    This is useful when a quick visual check or a first Excel export should not
+    process every file. Instead of returning a single `Path` instance, the
+    function deliberately returns a list again, so the rest of the flow in
+    `export_csvs_to_excel` can stay unchanged.
 
-    Aufrufkontext:
-    Wird in `export_csvs_to_excel` verwendet, wenn der Modus `smallest`
-    gewaehlt wurde.
+    Call context:
+    Used in `export_csvs_to_excel` when the `smallest` mode is selected.
     """
     smallest = min(csv_files, key=lambda f: f.stat().st_size)
     print(f"Selected smallest file: {smallest.name} ({smallest.stat().st_size / 1e6:.2f} MB)")
@@ -31,17 +29,17 @@ def export_csvs_to_excel(
     mode: str = "all",  # "all" or "smallest"
 ) -> None:
     """
-    Konvertiert CSV-Ergebnisdateien in Excel-Dateien fuer die manuelle Analyse.
+    Convert CSV result files into Excel files for manual analysis.
 
-    Die Funktion durchsucht ein Eingabeverzeichnis nach CSV-Dateien, entscheidet
-    je nach Modus, ob alle oder nur die kleinste Datei verarbeitet werden soll,
-    und schreibt anschliessend fuer jede geladene CSV eine `.xlsx`-Datei in das
-    Zielverzeichnis. Fehler beim Einlesen oder Schreiben einzelner Dateien werden
-    protokolliert, damit ein Problem nicht den gesamten Exportlauf abbricht.
+    The function searches an input directory for CSV files, decides based on the
+    mode whether all files or only the smallest one should be processed, and then
+    writes one `.xlsx` file per loaded CSV into the target directory. Errors while
+    reading or writing individual files are logged, so one problem does not abort
+    the whole export run.
 
-    Aufrufkontext:
-    Diese Funktion wird ueber den Script-Block am Ende der Datei ausgefuehrt und
-    ist nicht Bestandteil des normalen Haupt-Pipelineschritts in `src.main`.
+    Call context:
+    Run through the script block at the end of the file; it is not part of the
+    normal main pipeline step in `src.main`.
 
     mode:
         - "all" → export all CSVs
