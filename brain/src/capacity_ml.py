@@ -1269,10 +1269,10 @@ def _daily_usage_from_intervals(work: pd.DataFrame, time_col: str) -> pd.DataFra
 
     daily_usage: dict[pd.Timestamp, list[float]] = {}
     for row in intervals.itertuples(index=False):
-        start = getattr(row, "start_timestamp")
+        start = row.start_timestamp
         end = getattr(row, time_col)
-        discharge_ah = max(0.0, float(getattr(row, "discharge_ah")))
-        discharge_wh = max(0.0, float(getattr(row, "discharge_wh")))
+        discharge_ah = max(0.0, float(row.discharge_ah))
+        discharge_wh = max(0.0, float(row.discharge_wh))
 
         if pd.isna(start) or pd.isna(end) or end <= start:
             day = pd.Timestamp(end).floor("D")

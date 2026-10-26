@@ -225,7 +225,7 @@ def inspect_modules_from_db(
                 if len(examples) < max_examples:
                     examples.append(str(value)[:500])
 
-    print(f"Source              : TimescaleDB")
+    print("Source              : TimescaleDB")
     print(f"Table               : {table}")
     print(f"Serial              : {serial}")
     print(f"Since               : {since}")

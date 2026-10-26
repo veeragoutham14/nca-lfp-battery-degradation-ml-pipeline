@@ -1,8 +1,6 @@
-import pandas as pd
 
 from src.anomaly_detection import (
     get_all_anomalies,
-    get_available_anomaly_features,
     get_top_anomalies,
     run_isolation_forest,
 )
@@ -22,7 +20,7 @@ from src.io_utils import (
     save_feature_table,
 )
 from src.preprocessing import prepare_base_dataframe
-from src.visualization import plot_anomalies, run_all_visual_checks
+from src.visualization import run_all_visual_checks
 
 
 def extract() -> None:

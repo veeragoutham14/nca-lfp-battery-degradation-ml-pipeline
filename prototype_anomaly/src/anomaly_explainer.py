@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 
-from src.config import ANOMALY_FEATURES
-
 # =========================================================
 # EXPLAINER CONFIG
 # =========================================================

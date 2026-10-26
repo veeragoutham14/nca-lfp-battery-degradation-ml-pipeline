@@ -13,7 +13,6 @@ from src.config import (
     ROLL_S,
     SOC_COL,
     SOH_COL,
-    TEMP_SENSOR_COLS,
     TS_COL,
     VOLTAGE_COL,
 )

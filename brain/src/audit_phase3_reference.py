@@ -15,7 +15,6 @@ from src.device_specs import nominal_capacity_ah_for_serial
 from src.electrothermal_capacity_context import (
     _canonicalize_physical_cycles,
     _safe_json,
-    summarize_event_frame,
 )
 from src.io_utils import write_parquet_chunk
 

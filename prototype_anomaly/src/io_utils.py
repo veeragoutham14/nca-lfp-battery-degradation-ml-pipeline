@@ -8,7 +8,6 @@ from src.config import (
     ANOMALY_TOP20_OUTPUT_FILENAME,
     CSV_GLOB,
     FEATURE_OUTPUT_FILENAME,
-    TIMESTAMP_FORMAT,
     TS_COL,
 )
 
