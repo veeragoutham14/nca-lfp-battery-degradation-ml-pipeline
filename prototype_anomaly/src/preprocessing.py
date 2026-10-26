@@ -191,7 +191,7 @@ def drop_rows_missing_core_signals(df: pd.DataFrame) -> pd.DataFrame:
 
     First, rows without the central electrical signals are dropped. Then rows
     without the required voltage-spread inputs are excluded. Finally,
-    `has_sufficient_pack_temperature` makes sure that the temperature coverage
+    `get_sufficient_pack_temperature_mask` makes sure that the temperature coverage
     per pack is high enough as well. The result is a much more robust input
     dataset for the subsequent engineering steps.
 
