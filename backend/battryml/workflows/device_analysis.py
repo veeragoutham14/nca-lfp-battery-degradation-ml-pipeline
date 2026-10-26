@@ -12,6 +12,7 @@ import pyarrow.parquet as pq
 
 from battryml.config import Settings
 from battryml.plugins.bms_soh_recalibration import BmsSohRecalibrationPlugin
+from battryml.plugins.data_validation import ElectrothermalImportValidationPlugin
 from battryml.plugins.electrothermal import (
     ElectrothermalSourceAuditPlugin,
     HierarchicalElectrothermalFeaturesPlugin,
@@ -56,19 +57,6 @@ def _raw_bounds(root: Path, serial: str, chemistry: str) -> tuple[datetime, date
     if minimum is None or maximum is None:
         raise ValueError(f"Raw telemetry for {serial} has no usable timestamp statistics")
     return minimum, maximum + timedelta(seconds=1)
-
-
-def _latest_feature_end(root: Path, serial: str) -> datetime | None:
-    summaries = sorted((root / f"serial={serial}").glob("feature_run=*/model_summary.json"))
-    for path in reversed(summaries):
-        try:
-            value = json.loads(path.read_text(encoding="utf-8")).get("end")
-            if value:
-                parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
-                return parsed if parsed.tzinfo else parsed.replace(tzinfo=UTC)
-        except (OSError, ValueError, json.JSONDecodeError):
-            continue
-    return None
 
 
 def _phase3_uses_catalog(reference_root: Path, catalog_run_id: str) -> bool:
@@ -141,36 +129,41 @@ def prepare_data(args: argparse.Namespace, settings: Settings) -> None:
             RawTelemetryImportPlugin().build_command(settings, values),
             cwd=settings.source_root,
         )
-    raw_start, raw_end = _raw_bounds(
-        settings.source_root / "data" / "raw_parquet", args.serial, args.chemistry
-    )
+    _raw_bounds(settings.source_root / "data" / "raw_parquet", args.serial, args.chemistry)
+    if settings.source_database_status()["configured"]:
+        _run_stage(
+            "electrothermal_source_audit",
+            ElectrothermalSourceAuditPlugin().build_command(settings, common),
+            cwd=settings.source_root,
+        )
     _run_stage(
-        "electrothermal_source_audit",
-        ElectrothermalSourceAuditPlugin().build_command(settings, common),
+        "electrothermal_validation",
+        ElectrothermalImportValidationPlugin().build_command(
+            settings, _hierarchical_feature_values(args)
+        ),
         cwd=settings.source_root,
     )
-    feature_root = settings.source_root / "data" / "processed" / "bms_hierarchical_features"
-    previous_end = _latest_feature_end(feature_root, args.serial)
-    if previous_end is None:
-        feature_start = raw_start
-    elif previous_end < raw_end:
-        feature_start = max(raw_start, previous_end)
-    else:
-        feature_start = max(raw_start, raw_end - timedelta(minutes=10))
     _run_stage(
         "hierarchical_features",
         HierarchicalElectrothermalFeaturesPlugin().build_command(
-            settings,
-            {
-                **common,
-                "start": feature_start.isoformat(),
-                "end": raw_end.isoformat(),
-                "aggregation_minutes": "5",
-            },
+            settings, _hierarchical_feature_values(args)
         ),
         cwd=settings.source_root,
     )
     validate_analysis_inputs(args, settings)
+
+
+def _hierarchical_feature_values(args: argparse.Namespace) -> dict[str, Any]:
+    """Parameters the local electrothermal validation and feature plugins accept.
+
+    The local feature builder reads the whole five-minute history, so it takes no
+    start, end or aggregation window.
+    """
+    return {
+        "serial": args.serial,
+        "module_count": args.module_count,
+        "chemistry": args.chemistry,
+    }
 
 
 def investigate(args: argparse.Namespace, settings: Settings) -> None:
