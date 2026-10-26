@@ -17,7 +17,7 @@ with <signal>__mean, __min, __max, __std and __count per channel.
 With --dense-field-device it adds 100000002 (NCA) and 100000021 (LFP), field
 devices with continuous 1-second data on 16 days in each of four months of 2024.
 The seasonal, BMS SOH recalibration and voltage anomaly analyses need that
-coverage. Each is about 5.5 million rows, so they are opt-in.
+coverage. Each is about 9 million rows, so they are opt-in.
 
 Cell voltages follow a chemistry-specific open-circuit voltage curve plus an
 ohmic term whose resistance rises in the cold. Voltage windows, nominal
@@ -52,6 +52,7 @@ ELECTROTHERMAL_STATISTICS = (
 )
 DENSE_FIELD_SERIAL = 100000002
 DENSE_FIELD_CAPACITY_AH = 64.0
+DENSE_DAYS_PER_MONTH = 26
 DENSE_LFP_SERIAL = 100000021
 DENSE_LFP_CAPACITY_AH = 50.0
 
@@ -187,7 +188,8 @@ def _build_table(
         if voltage_match:
             cell_index = int(voltage_match.group(3))
             bias = segment.cell_bias_mv if cell_index == 7 else 0.0
-            values = cell_base_mv + cell_index * 1.5 + bias
+            # BMS cell voltages are reported in whole millivolts.
+            values = np.round(cell_base_mv + cell_index * 1.5 + bias)
             arrays.append(pa.array(values))
             continue
         temperature_match = CELL_TEMP.search(name)
@@ -272,7 +274,7 @@ def _write_device(
         directory = output / f"serial={serial}" / f"year={year:04d}" / f"month={month:02d}"
         directory.mkdir(parents=True, exist_ok=True)
         path = directory / "part-000.parquet"
-        pq.write_table(pa.concat_tables(tables), path, compression="snappy")
+        pq.write_table(pa.concat_tables(tables), path, compression="zstd")
         written += sum(segment.rows for segment in month_segments)
     return written
 
@@ -420,7 +422,7 @@ def _write_device_streaming(
                 )
                 directory.mkdir(parents=True, exist_ok=True)
                 writers[key] = pq.ParquetWriter(
-                    directory / "part-000.parquet", table.schema, compression="snappy"
+                    directory / "part-000.parquet", table.schema, compression="zstd"
                 )
                 buffers[key] = []
             buffers[key].append(table)
@@ -500,7 +502,7 @@ def _dense_field_segments(
     anomaly_month: int = 7,
     anomaly_mv: float = 40.0,
 ) -> list[Segment]:
-    """Continuous 1-second home use on 16 days in January, April, July and October 2024.
+    """Continuous 1-second home use on 26 days in January, April, July and October 2024.
 
     About one equivalent full cycle a day. True capacity fades by
     fade_pct_per_day_25c per day at 25 C, scaled by an Arrhenius factor of the
@@ -510,7 +512,8 @@ def _dense_field_segments(
     reported BMS SOH steps down after full discharges in April, July and
     October, which gives the recalibration analysis events to find. Charging is
     faster in summer, and cell 7 is offset by anomaly_mv on six days of
-    anomaly_month.
+    anomaly_month. Twenty-six logged days cover more than 80 % of each month, so
+    every month qualifies for the seasonal profile.
     """
     months = ((1, 4.0, 14.0), (4, 13.0, 22.0), (7, 27.0, 36.0), (10, 12.0, 20.0))
     reported_soh = {1: 98.0, 4: 97.0, 7: 96.0, 10: 95.0}
@@ -520,14 +523,14 @@ def _dense_field_segments(
     true_soh = 98.5
     for month, ambient, charge_current in months:
         bms_soh = reported_soh[month] + (0.0 if month == 1 else 1.0)
-        for day in range(1, 17):
+        for day in range(1, DENSE_DAYS_PER_MONTH + 1):
             day_start = datetime(2024, month, day, tzinfo=UTC)
             if day_index:
                 true_soh -= fade_pct_per_day_25c * _arrhenius_factor(ambient)
-            full = day in (4, 12)
+            full = day in (4, 12, 20)
             if month != 1 and day == 5:
                 bms_soh = reported_soh[month]
-            seasonal_swing = 1.5 * math.sin(2 * math.pi * day / 16.0)
+            seasonal_swing = 1.5 * math.sin(2 * math.pi * day / DENSE_DAYS_PER_MONTH)
             day_segments, soc = _dense_day(
                 day_start,
                 soc_start=soc,
@@ -660,7 +663,7 @@ def main() -> None:
         "--dense-field-device",
         action="store_true",
         help="Also write the continuous field devices 100000002 (NCA) and 100000021 (LFP), "
-        "about 5.5 M rows each.",
+        "about 9 M rows each.",
     )
     args = parser.parse_args()
     output = args.output.resolve()
