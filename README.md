@@ -113,6 +113,70 @@ The lab reference `100000017` has eight exact 100% to 0% discharges. The field d
 | Seasonal profile | Monthly temperature and throughput. The full seasonal module also reads hierarchical features when those exist. |
 | Dashboard | NCA and LFP workspaces, device library, job launch, and run charts. |
 
+## Applications, extension and scaling
+
+### What the central view is for
+
+Every device's telemetry goes through the same brain modules and ends up in one DuckDB catalog. The dashboard can then put devices next to each other instead of opening one analysis per device. In the synthetic benchmark that meant 30 devices, 38.8 million rows and 9.8 GB of raw Parquet, processed in 479 s one device at a time (median 13.4 s per device). After that, the 19-device NCA comparison answers in a median of 81 ms and the device list in 53 ms.
+
+The design supports these uses:
+
+| Use | What the pipeline provides |
+| --- | --- |
+| Fleet health monitoring | One device library per chemistry, the NCA fleet capacity page, and per-device run charts for SOH, capacity, anomalies, electrothermal and seasonal results |
+| Warranty and SOH checks | Capacity SOH from exact full discharges set against the BMS SOH value, the SOH gap diagnosis, and the 10-year forecast with its 80% SOH line |
+| NCA vs LFP comparison | Chemistry is part of each battery profile (`config/battery_profiles.json`), and plugins can be limited to one chemistry |
+| Field vs lab cycles | Field devices are compared with a full-cycle reference through an adjustable reference loss slope |
+| Early anomaly detection | Cell-spread candidates, hierarchical voltage anomaly episodes, and the Isolation Forest prototype flag cell-level voltage deviations per device, separate from the pack capacity trend |
+
+These are uses the code is built for. Every result in this repository comes from synthetic data.
+
+### How a job flows through the code
+
+```mermaid
+flowchart LR
+  ui["Dashboard<br/>frontend/src/api.ts"] -->|"POST /api/jobs"| runner["PipelineJobRunner<br/>backend/battryml/jobs.py"]
+  runner --> plugin["PipelinePlugin.build_command<br/>backend/battryml/plugins/"]
+  plugin -->|"python -m src.module"| brain["Brain module<br/>brain/src/"]
+  brain --> runs["data/processed/root/serial=id/run=stamp/<br/>model_summary.json + Parquet"]
+  runs --> scanner["Run scanner<br/>catalog/scanner.py"]
+  scanner --> duck["DuckDB catalog"]
+  duck -->|"GET /api/runs, /api/analytics/..."| ui
+```
+
+Each brain module is a normal command-line program with `build_parser()` and `main()`. A backend plugin only describes the module: its key, parameters, allowed device roles and chemistries, the stages it depends on, and the command to run. `PipelineJobRunner.submit` validates the parameters, refuses a second active job for the same device, and runs the command in a detached worker process (`backend/battryml/job_worker.py`). When the module writes a run folder with a `model_summary.json`, `LegacyRunScanner` picks it up through its `RUN_FAMILIES` entry and records the run, its artifacts and its datasets in DuckDB.
+
+### Adding a new analytics feature
+
+Example: a hypothetical daily charge-efficiency trend per device.
+
+1. **Brain module.** Add `brain/src/charge_efficiency.py` with `build_parser()` and `main()`. Read the event tables that `build_events.py` writes, compute the daily values with pandas, and write `data/processed/charge_efficiency/serial=<id>/efficiency_run=<stamp>/` containing a Parquet table and `model_summary.json`. Add tests in `brain/tests/`.
+2. **Plugin.** Add a `PipelinePlugin` subclass in `backend/battryml/plugins/` with `key`, `name`, `output_family`, `workflow_stage`, `requires_stage` (the stage it depends on) and a `parameters` tuple of `ParameterDefinition`. Its `build_command` returns `(settings.source_python, "-m", "src.charge_efficiency", "--serial", ...)`. Register it in `build_default_registry()` in `plugins/registry.py`. It then appears in `GET /api/pipelines` and can be started with `POST /api/jobs`.
+3. **Catalog.** Add a `RunFamily` to `RUN_FAMILIES` in `catalog/scanner.py` with the root name, run prefix, and which files are history, forecast or validation. The generic `/api/runs/{run_id}/summary`, `/series` and `/artifacts` routes then serve the new run without a new route.
+4. **Fleet view (optional).** For a cross-device view, add a builder in `backend/battryml/analytics/`, following `nca_capacity_overview.py`, and expose it with an `@app.get("/api/analytics/...")` route in `api/app.py`.
+5. **Dashboard.** Add a method to the `api` object in `frontend/src/api.ts` and a component that renders `ReactEChartsCore` with the shared `echarts` instance from `frontend/src/echarts.ts`, registering any extra chart type there. Load a new page with `lazy()` in `App.tsx` so it stays out of the first-load bundle, or add it as a tab on the Machine learning page.
+6. **Tests.** Cover the plugin and route in `backend/tests/` (see `test_plugins.py` and `test_api.py`). CI runs them with ruff and the scan.
+
+**New signals.** Raw input is Parquet in `brain/data/raw_parquet/serial=<id>/year=YYYY/month=MM/`. The core signal names are set in `SignalColumnConfig` in `brain/src/config.py` and can be remapped with environment variables such as `CURRENT_COL` and `SOC_COL`, together with the rest threshold and the gap threshold. Extra per-module, per-sensor and system signals are described in `config/signal_catalog.json` and `config/telemetry_import_profiles.json`.
+
+**Other data sources.** Extraction is a separate first step. `brain/src/extract_db.py` and `brain/src/extract_configurable_telemetry.py` read from an optional PostgreSQL source into that layout, and `scripts/generate_synthetic_telemetry.py` writes the same layout from a generator. Any source that writes that partition layout with the configured columns can replace them. `brain/src/validate_raw_parquet.py` and the data validation plugin check the result before analysis.
+
+### Scaling
+
+| Already in the code | Measured or configured |
+| --- | --- |
+| Parquet partitioned by `serial`, `year` and `month` | A device run reads only its own `serial=<id>` folder, and month folders keep files small |
+| Independent per-device runs | 30 devices: 479 s sequential, 219 s with two parallel workers (`scripts/benchmark.py --workers 2`) |
+| Separate thread pools for extraction and analysis jobs | `BATTRYML_WORKER_THREADS` (default 2) and `BATTRYML_ML_WORKER_THREADS` (default 1) |
+| DuckDB catalog with indexes on serial and run time | Fleet comparison over 19 devices: median 81 ms |
+
+Possible next steps, not implemented here:
+
+- A shared job queue, for example a message broker, so jobs can run on several hosts. Today the runner keeps jobs in the DuckDB catalog and recovers unfinished ones on restart (`recover_incomplete_jobs`), but runs them on one host.
+- More workers per host, limited by memory: the largest single brain process used 5.3 GB on six months of data.
+- Object storage for the Parquet partitions, read by DuckDB or PyArrow.
+- Incremental runs that only process new months for each device.
+
 ## Tech stack
 
 | Layer | Tools |
