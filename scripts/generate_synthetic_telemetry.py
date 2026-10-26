@@ -16,7 +16,7 @@ import argparse
 import json
 import re
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import numpy as np
@@ -219,7 +219,7 @@ def _reference_segments() -> list[Segment]:
     ambient = {1: 6.0, 3: 11.0, 5: 18.0, 7: 28.0, 9: 19.0, 11: 8.0}
     segments: list[Segment] = []
     for index, (year, month) in enumerate(months):
-        start = datetime(year, month, 8, 8, 0, tzinfo=timezone.utc)
+        start = datetime(year, month, 8, 8, 0, tzinfo=UTC)
         segments.extend(
             _full_cycle(
                 start,
@@ -235,10 +235,10 @@ def _reference_segments() -> list[Segment]:
 def _field_segments() -> list[Segment]:
     """Partial home use, one long gap, and one warm-month cell offset."""
     plan = [
-        (datetime(2024, 1, 16, 18, 0, tzinfo=timezone.utc), 4.0, 0.0, 90),
-        (datetime(2024, 4, 16, 18, 0, tzinfo=timezone.utc), 15.0, 0.0, 90),
-        (datetime(2024, 7, 16, 18, 0, tzinfo=timezone.utc), 29.0, 55.0, 120),
-        (datetime(2024, 10, 16, 18, 0, tzinfo=timezone.utc), 12.0, 0.0, 90),
+        (datetime(2024, 1, 16, 18, 0, tzinfo=UTC), 4.0, 0.0, 90),
+        (datetime(2024, 4, 16, 18, 0, tzinfo=UTC), 15.0, 0.0, 90),
+        (datetime(2024, 7, 16, 18, 0, tzinfo=UTC), 29.0, 55.0, 120),
+        (datetime(2024, 10, 16, 18, 0, tzinfo=UTC), 12.0, 0.0, 90),
     ]
     segments: list[Segment] = []
     for index, (start, ambient, bias, gap) in enumerate(plan, start=1):
@@ -256,7 +256,7 @@ def _field_segments() -> list[Segment]:
 
 
 def _lfp_segments() -> list[Segment]:
-    start = datetime(2025, 2, 3, 12, 0, tzinfo=timezone.utc)
+    start = datetime(2025, 2, 3, 12, 0, tzinfo=UTC)
     return [
         Segment(start, 20, 70.0, 70.0, 0.2, 96.0, 9.0, 1, gap_after_s=1),
         Segment(start + timedelta(seconds=20), 901, 70.0, 55.0, -8.0, 96.0, 9.0, 1, gap_after_s=90),

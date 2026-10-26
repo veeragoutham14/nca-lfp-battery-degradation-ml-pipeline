@@ -5,7 +5,7 @@ import logging
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -753,7 +753,7 @@ def build_discharge_capacity_trend(
     trend_table = build_capacity_trend_table(measurements, future_events=future_events)
 
     serial_label = str(serial or events["serial"].iloc[0])
-    run_id = run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_id = run_id or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     output_dir = output_base_dir / f"serial={serial_label}" / f"capacity_run={run_id}"
     write_capacity_outputs(
         usage_ledger=usage_ledger,

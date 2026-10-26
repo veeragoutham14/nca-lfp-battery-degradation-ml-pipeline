@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import logging
 from collections.abc import Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -44,7 +44,7 @@ def classify_raw_rows(
     if threshold < 0:
         raise ValueError("rest_current_threshold_a must be nonnegative")
 
-    run_id = run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_id = run_id or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     files = collect_parquet_files(input_path)
     if not files:
         raise FileNotFoundError(f"No raw Parquet files found under {input_path}")

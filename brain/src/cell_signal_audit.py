@@ -4,10 +4,11 @@ import argparse
 import json
 import logging
 import re
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
 import pandas as pd
 from psycopg2 import sql

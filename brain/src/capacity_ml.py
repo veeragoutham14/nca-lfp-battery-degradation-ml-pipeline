@@ -5,7 +5,7 @@ import json
 import logging
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -2122,7 +2122,7 @@ def build_capacity_ml_forecast(
     )
 
     serial_label = str(model_training_table["serial"].iloc[0])
-    run_id = run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_id = run_id or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     output_dir = output_base_dir / f"serial={serial_label}" / f"ml_run={run_id}"
     output_dir.mkdir(parents=True, exist_ok=True)
 

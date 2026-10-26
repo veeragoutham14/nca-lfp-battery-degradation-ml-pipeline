@@ -646,7 +646,7 @@ def run_phase3(
                 (
                     f"{event_id}|{event['start_utc']}|{event['end_utc']}|"
                     f"{module_count}|{pre_minutes}|{post_minutes}"
-                ).encode("utf-8")
+                ).encode()
             ).hexdigest()[:12]
             cache_path = cache_dir / f"event={event_id}__window={cache_identity}.parquet"
             if cache_path.exists():

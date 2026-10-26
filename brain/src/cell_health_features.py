@@ -3,9 +3,10 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
 import pandas as pd
 from psycopg2 import sql

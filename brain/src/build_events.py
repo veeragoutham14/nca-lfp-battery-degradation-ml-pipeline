@@ -4,7 +4,7 @@ import argparse
 import logging
 from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -182,7 +182,7 @@ def build_events_from_raw_parquet(
     if threshold < 0:
         raise ValueError("rest_current_threshold_a must be nonnegative.")
 
-    run_id = run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_id = run_id or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     merger = EventMerger(
         rest_current_threshold_a=threshold,
         missing_gap_threshold_seconds=columns.missing_gap_threshold_seconds,

@@ -4,9 +4,10 @@ import argparse
 import hashlib
 import json
 import logging
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
 import numpy as np
 import pandas as pd

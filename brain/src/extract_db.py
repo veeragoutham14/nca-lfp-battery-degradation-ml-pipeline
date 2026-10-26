@@ -3,10 +3,10 @@ from __future__ import annotations
 import argparse
 import logging
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Sequence
 from uuid import uuid4
 
 import pandas as pd

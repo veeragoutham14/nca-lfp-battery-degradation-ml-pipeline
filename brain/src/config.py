@@ -102,7 +102,7 @@ class DBConfig:
     application_name: str = "veera_soh_extractor"
 
     @classmethod
-    def from_env(cls, env_file: str | Path | None = None) -> "DBConfig":
+    def from_env(cls, env_file: str | Path | None = None) -> DBConfig:
         load_project_env(env_file)
 
         port_value = _required_env("DB_PORT")
@@ -144,7 +144,7 @@ class StorageConfig:
         event_parquet_dir: str | Path | None = None,
         capacity_trend_dir: str | Path | None = None,
         capacity_ml_dir: str | Path | None = None,
-    ) -> "StorageConfig":
+    ) -> StorageConfig:
         load_project_env(env_file)
 
         data_dir = _env_path("DATA_DIR", DEFAULT_DATA_DIR)
@@ -217,7 +217,7 @@ class CapacityModelConfig:
     recent_usage_days: int = 90
 
     @classmethod
-    def from_env(cls, env_file: str | Path | None = None) -> "CapacityModelConfig":
+    def from_env(cls, env_file: str | Path | None = None) -> CapacityModelConfig:
         load_project_env(env_file)
         return cls(
             nominal_capacity_ah=_env_optional_float("NOMINAL_CAPACITY_AH"),
@@ -271,7 +271,7 @@ class SignalColumnConfig:
     missing_gap_threshold_seconds: float = 60.0
 
     @classmethod
-    def from_env(cls, env_file: str | Path | None = None) -> "SignalColumnConfig":
+    def from_env(cls, env_file: str | Path | None = None) -> SignalColumnConfig:
         load_project_env(env_file)
         return cls(
             timestamp_col=os.getenv("TIMESTAMP_COL", cls.timestamp_col),

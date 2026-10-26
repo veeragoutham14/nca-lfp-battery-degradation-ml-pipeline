@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import logging
 from collections.abc import Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -106,7 +106,7 @@ def build_events_from_classified(
     events = merger.to_frame(event_id_col=columns.event_id_col)
     if events.empty:
         raise ValueError("No events were created from the classified telemetry")
-    run_id = run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_id = run_id or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     paths = tuple(
         write_event_tables(
             events,

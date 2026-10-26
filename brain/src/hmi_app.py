@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import base64
 import sys
-from datetime import date, datetime, time, timezone
+from datetime import UTC, date, datetime, time
 from pathlib import Path
 from typing import Any
 
@@ -69,7 +69,7 @@ def _blank_to_none(value: Any) -> Any:
 def _format_datetime(day: date | None, clock: time | None) -> str | None:
     if day is None:
         return None
-    value = datetime.combine(day, clock or time.min, tzinfo=timezone.utc)
+    value = datetime.combine(day, clock or time.min, tzinfo=UTC)
     return value.isoformat()
 
 

@@ -4,7 +4,7 @@ import argparse
 import logging
 import re
 from collections.abc import Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -51,7 +51,7 @@ def default_output_path(
     value_col: str,
 ) -> Path:
     """Build the default non-overwriting HTML path for a raw signal plot."""
-    run_label = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_label = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     filename = (
         f"raw_signal_{_safe_label(value_col)}_"
         f"{_safe_label(input_path.name)}_{run_label}.html"

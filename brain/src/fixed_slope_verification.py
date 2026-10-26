@@ -5,7 +5,7 @@ import html
 import json
 import logging
 from collections.abc import Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -388,7 +388,7 @@ def run_fixed_slope_verification(
     )
     forecast = pd.concat(forecast_parts, ignore_index=True)
 
-    run_id = run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    run_id = run_id or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     output_dir = (
         output_base_dir / f"serial={serial}" / f"verification_run={run_id}"
     )

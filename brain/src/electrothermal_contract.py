@@ -3,8 +3,8 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from collections.abc import Iterable
 from dataclasses import asdict, dataclass
-from typing import Iterable
 
 MAX_MODULE_COUNT = 4
 PACKS_PER_MODULE = 2

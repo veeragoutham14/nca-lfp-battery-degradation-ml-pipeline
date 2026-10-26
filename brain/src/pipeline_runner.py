@@ -5,7 +5,7 @@ import subprocess
 import sys
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -203,7 +203,7 @@ def run_stage(
 ) -> PipelineRunResult:
     """Run one pipeline stage in a subprocess and capture console output."""
     command = build_command(stage_key, options)
-    started_at = datetime.now(timezone.utc)
+    started_at = datetime.now(UTC)
     completed = subprocess.run(
         command,
         cwd=cwd,
@@ -213,7 +213,7 @@ def run_stage(
         errors="replace",
         check=False,
     )
-    completed_at = datetime.now(timezone.utc)
+    completed_at = datetime.now(UTC)
     return PipelineRunResult(
         stage_key=stage_key,
         command=command,
@@ -242,7 +242,7 @@ def run_pipeline(
     return results
 
 
-def get_storage_config(env_file: str | Path | None = None) -> "StorageConfig":
+def get_storage_config(env_file: str | Path | None = None) -> StorageConfig:
     from src.config import StorageConfig
 
     return StorageConfig.from_env(env_file if _has_value(env_file) else None)
