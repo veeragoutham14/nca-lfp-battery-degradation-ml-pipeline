@@ -621,6 +621,38 @@ def write_electrothermal_aggregates(
     return written
 
 
+def write_module_count_snapshot(raw_output: Path, serial: int, module_count: int = 2) -> Path:
+    """Record the generated module count the way brain/src/import_module_counts.py does.
+
+    The database import writes one verified snapshot per serial under
+    data/processed/device_metadata/module_counts/. Every generated device has
+    two modules, so the dashboard and the cell-level stages can group it by
+    module count without a database.
+    """
+    target = (
+        raw_output.parent
+        / "processed"
+        / "device_metadata"
+        / "module_counts"
+        / f"serial={serial}"
+        / "module_count.parquet"
+    )
+    target.parent.mkdir(parents=True, exist_ok=True)
+    table = pa.table(
+        {
+            "serial": [str(serial)],
+            "module_count": [module_count],
+            "observed_module_counts": [str(module_count)],
+            "module_count_sample_rows": [1],
+            "module_count_agreement": [1.0],
+            "module_count_status": ["verified"],
+            "imported_at": [datetime(2025, 1, 1, tzinfo=UTC)],
+        }
+    )
+    pq.write_table(table, target)
+    return target
+
+
 def generate(
     output: Path,
     *,
@@ -657,6 +689,8 @@ def generate(
             )
             print(f"serial={serial} rows={rows}")
             devices.append((serial, chemistry, []))
+    for serial, _chemistry, _segments in devices:
+        write_module_count_snapshot(output, serial)
     if electrothermal_output is not None:
         for serial, chemistry, _segments in devices:
             buckets = write_electrothermal_aggregates(

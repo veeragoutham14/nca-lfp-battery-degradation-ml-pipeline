@@ -109,3 +109,15 @@ def test_bms_soh_steps_when_the_charge_after_a_full_discharge_starts():
             if segment.soc_end == 1.0 and segment.current_a < 0
         )
         assert full_discharge.start.day == 4
+
+
+def test_module_count_snapshot_matches_the_device_registry_reader(tmp_path):
+    from battryml.data.devices import _module_count_snapshot
+
+    raw = tmp_path / "data" / "raw_parquet"
+    _generator().write_module_count_snapshot(raw, 100000002)
+    snapshot = _module_count_snapshot(
+        tmp_path / "data" / "processed" / "device_metadata" / "module_counts.parquet"
+    )
+    assert snapshot["100000002"]["module_count"] == 2
+    assert snapshot["100000002"]["module_count_status"] == "verified"
