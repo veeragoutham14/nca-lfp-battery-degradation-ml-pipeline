@@ -16,7 +16,7 @@ database import step (purpose electrothermal_history) would produce:
 with <signal>__mean, __min, __max, __std and __count per channel.
 
 With --dense-field-device it adds 100000002 (NCA) and 100000021 (LFP), field
-devices with continuous 1-second data on 16 days in each of four months of 2024.
+devices with continuous 1-second data on 26 days in each of four months of 2024.
 The seasonal, BMS SOH recalibration and voltage anomaly analyses need that
 coverage. Each is about 9 million rows, so they are opt-in.
 
